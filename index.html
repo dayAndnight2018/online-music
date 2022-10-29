@@ -12,7 +12,7 @@
     <script src="js/vueResource.js"></script>
     <script src="js/jquery.js"></script>
     <script src="capture.js"></script>
-    
+     
     <!-- 标题 -->
     <title>云音乐</title>
     <style>
@@ -104,10 +104,23 @@
             right: 10px;
             bottom: 30px;
             z-index: 997;
-            width: 50px;
-            height: 50px;
+
             box-shadow: 1px 1px 2px 2px silver;
-            border-radius: 50%;
+            border-radius: 5px 20px 20px 20px;
+            padding: 5px;
+            max-width: 150px;
+
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            background: var(--global-fore-color);
+        }
+
+        .playerBarItem {
+            display: flex;
+            flex-direction: row;
+            align-items: center;
+            width: 100%;
         }
 
         .playerTag {
@@ -222,6 +235,21 @@
             background-color:ffd633 !important;
 
         }
+
+        #playingBarTitle{
+            font-size: 12px;
+            text-align: center;
+            text-overflow: ellipsis;
+            white-space: nowrap;
+            overflow: hidden; 
+            margin: 0px 5px;
+        }
+
+        #playingBatImage{
+            width: 40px; 
+            height: 40px; 
+            border-radius: 50%;
+        }
     </style>
 </head>
 
@@ -229,7 +257,31 @@
     <div id="app">
 
         <div id="playerBar">
-            <i class="fa fa-play-circle playerTag" @click="showPlayer()"></i>
+            <div class="playerBarItem">
+                <img id="playingBatImage" :class="{'rotate': playing}" :src="playingSongImage" @click="showPlayer()" />
+                <div id="playingBarTitle" v-if="present">{{playingSongName}}-{{playingSongSinger}}</div>
+            </div>
+
+            <div class="playerBarItem">
+                <div class="playControlWrapper noBackgroundWrapper" style="width:30px;height:30px;margin: 0px 2px;" v-if="present">
+                <i class="fa fa-compress playControl playControlTransparent" style="font-size: 15px;color: silver !important;" v-on:click="tooglePlayerBar()"></i>
+                </div>
+                <div class="playControlWrapper noBackgroundWrapper" style="width:30px;height:30px;margin: 0px 2px;" v-else>
+                    <i class="fa fa-expand playControl playControlTransparent" style="font-size: 15px;color: silver !important;" v-on:click="tooglePlayerBar()"></i>
+                </div>
+                <div class="playControlWrapper noBackgroundWrapper" style="width:30px;height:30px;margin: 0px 2px;" v-if="present">
+                    <i class="fa fa-step-backward playControl playControlTransparent" style="font-size: 20px;color: silver !important;" v-on:click="lastSong()"></i>
+                </div>
+                <div class="playControlWrapper" v-if="present && playing" style="width:30px;height:30px;margin: 0px 2px;">
+                    <i class="fa fa-pause playControl" v-on:click="startOrPause()" style="font-size: 20px;"></i>
+                </div>
+                <div class="playControlWrapper" v-if="present && !playing" style="width:30px;height:30px;margin: 0px 2px;">
+                    <i class="fa fa-play playControl" v-on:click="startOrPause()" style="font-size: 20px;"></i>
+                </div>
+                <div class="playControlWrapper noBackgroundWrapper" style="width:30px;height:30px;margin: 0px 2px;" v-if="present">
+                    <i class="fa fa-step-forward playControl playControlTransparent" style="font-size: 20px;color: silver !important;" v-on:click="nextSong()"></i>
+                </div>
+            </div>                            
         </div>
 
         <!-- 这里是显示收藏夹 -->
@@ -251,7 +303,7 @@
                     <th>singer</th>
                 </thead>
                 <tbody style="overflow-y: scroll;margin: 0 auto;width: 100%;font-size: 8px;">
-                    <tr @click="listen3(music)" style="width: 100%;font-size: 8px;" v-for="music in collects">
+                    <tr @click="collectListen(music)" style="width: 100%;font-size: 8px;" v-for="music in collects">
                         <td style="word-wrap: break-word;word-break: break-all;">{{music.name}}</td>
                         <td style="word-wrap: break-word;word-break: break-all;">{{getName(music.artist)}}</td>
                     </tr>
@@ -276,7 +328,7 @@
                     <th style="font-size: 16px !important">歌手</th>
                 </thead>
                 <tbody style="overflow-y: scroll;margin: 0 auto;width: 100%;">
-                    <tr @click="listen4(music)" style="width: 100%;" v-for="music in musics">
+                    <tr @click="searchListen(music)" style="width: 100%;" v-for="music in musics">
                         <td style="word-wrap: break-word;word-break: break-all;font-size: 16px !important">{{music.name}}</td>
                         <td style="word-wrap: break-word;word-break: break-all;font-size: 12px !important">{{getName(music.artist)}}</td>
                     </tr>
@@ -300,16 +352,16 @@
                         style="font-size: 30px;color: white;margin-right: 10px;margin-top: 20px;float:right"
                         v-on:click="share()"></i>
                     </div>
-                    <div style="color: white;font-size: 20px;padding:5px 50px;text-align: center;width: 100%;text-overflow: ellipsis;white-space: nowrap;overflow: hidden;" id="title">
-                        歌曲名称</div>
-                    <div style="color: white;font-size: 12px;padding:5px;text-align: center;width: 100%;" id="author">
-                        演唱者
+                    <div style="color: white;font-size: 20px;padding:5px 50px;text-align: center;width: 100%;text-overflow: ellipsis;white-space: nowrap;overflow: hidden;">
+                        {{playingSongName}}</div>
+                    <div style="color: white;font-size: 12px;padding:5px;text-align: center;width: 100%;">
+                        {{playingSongSinger}}
                     </div>
                 </div>
 
                 <div style="text-align: center;width: 100%;margin-top: 20px;">
                     <a id='download' style="display:block;margin:10px"><img id="image"
-                            src="https://p1.music.126.net/6y-UleORITEDbvrOLV0Q8A==/5639395138885805.jpg"
+                            :src="playingSongImage"
                             style="width: 200px; height: 200px;box-shadow: 1px 1px 2px 2px white;border-radius:50%" /></a>
                 </div>
 
@@ -334,18 +386,24 @@
                             <i class="fa fa-step-backward playControl playControlTransparent" v-on:click="lastSong()"></i>
                         </div>
                         <div class="playControlWrapper" v-if="playing">
-                            <i class="fa fa-pause playControl" v-on:click="listen2()"></i>
+                            <i class="fa fa-pause playControl" v-on:click="startOrPause()"></i>
                         </div>
                         <div class="playControlWrapper" v-else>
-                            <i class="fa fa-play playControl" v-on:click="listen2()"></i>
+                            <i class="fa fa-play playControl" v-on:click="startOrPause()"></i>
                         </div>
                         <div class="playControlWrapper noBackgroundWrapper">
                             <i class="fa fa-step-forward playControl playControlTransparent" v-on:click="nextSong()"></i>
                         </div>     
                         
                         <div style="display: flex;flex-direction: row;position: absolute;right: 15px;">
-                            <i id="playModeTag" class="fa fa-exchange" style="font-size: 25px;margin: 0px 5px;color: white;"
-                                v-on:click="playMode()"></i>
+                        
+                            <i class="fa fa-exchange" style="font-size: 25px;margin: 0px 5px;color: white;"
+                                v-on:click="mode = 2" v-if="mode == 1"></i>
+                            <i class="fa fa-level-down" style="font-size: 25px;margin: 0px 5px;color: white;"
+                                v-on:click="mode = 3" v-if="mode == 2"></i>
+                            <i class="fa fa-random" style="font-size: 25px;margin: 0px 5px;color: white;"
+                                v-on:click="mode = 1" v-if="mode == 3"></i>
+
                             <i class="fi-list" style="font-size: 25px;margin: 0px 5px;color: white;"
                                 v-on:click="toggleCard()"></i>
                             <i class="fi-heart" style="font-size: 25px;margin: 0px 5px; color:white;" :class="{'mactive': exists}"
@@ -433,19 +491,18 @@
 
         function picCallback(rdata) {
             if (rdata.url != ""){
-                $("#image").attr("src", rdata.url);
+                vue.playingSongImage = rdata.url;
                 $("#playCard").css("background-blend-mode", "overlay");
                 $("#playCard").css("background", "rgba(255,255,255,.4) url(" + rdata.url + ') center');
-            }else{
-                $("#image").attr("src", "https://p1.music.126.net/6y-UleORITEDbvrOLV0Q8A==/5639395138885805.jpg");
+            } else{
+                vue.playingSongImage = "https://p1.music.126.net/6y-UleORITEDbvrOLV0Q8A==/5639395138885805.jpg";
             }
         };
         function songCallback(rdata) {
             if (rdata.url == "") {
                 if (vue.mode == 1) {
-                    // vue.current = null;
                     $("#player")[0].currentTime = 0;
-                    $("#playControl").html("▶");
+                    vue.playing = false;
                     alert("资源不存在, 请播放其他资源");
                     return;
                 }
@@ -468,7 +525,7 @@
             $("#download").attr("download", $("#title").html());
             $("#download").attr("href", rdata.url);
 
-            vue.listen2();
+            vue.startOrPause();
         };
 
         function lrcCallback(rdata) {
@@ -536,9 +593,13 @@
                 },
                 playList: [],
                 currentIndex: 0,
-                mode: 1,
+                mode: 2,
                 index: 0,
-                playing: false
+                playing: false,
+                present: false,
+                playingSongImage: "https://p1.music.126.net/6y-UleORITEDbvrOLV0Q8A==/5639395138885805.jpg",
+                playingSongName: "歌曲名称",
+                playingSongSinger: "歌手",
             },
             mounted() {
                 var colls = JSON.parse(localStorage.getItem('collects'));
@@ -547,6 +608,9 @@
                 }
             },
             methods: {
+                tooglePlayerBar: function(){
+                    this.present = !this.present;
+                },
                 showPlayer: function () {
                     $("#searchArea").hide();
                     $("#listArea").hide();
@@ -608,12 +672,6 @@
                         }
                     }
                 },
-                stop: function () {
-                    $("#player")[0].pause();
-                    $("#playerBar").removeClass("rotate");
-                    $("#player")[0].currentTime = 0;
-                    $("#playControl").html("▶");
-                },
                 playMode: function () {
                     if ($("#playModeTag").hasClass("fa-exchange")) {
                         $("#playModeTag").removeClass("fa-exchange");
@@ -631,27 +689,15 @@
                         vue.mode = 1;
                     }
                 },
-                listen3: function (music) {
+                collectListen: function (music) {
                     this.playList = this.collects;
-                    for (var i = 0; i < this.collects.length; i++) {
-                        if (this.collects[i].url_id == music.url_id) {
-                            this.currentIndex = i;
-                            break;
-                        }
-                    }
-                    this.listen(music);
-                    this.closeCard();
+                    this.currentIndex = this.collects.findIndex((a) => a.url_id === music.url_id);
+                    this.listen(music, null, function() { vue.closeCard();}); 
                 },
-                listen4: function (music) {
+                searchListen: function (music) {
                     this.playList = this.musics;
-                    for (var i = 0; i < this.musics.length; i++) {
-                        if (this.musics[i].url_id == music.url_id) {
-                            this.currentIndex = i;
-                            break;
-                        }
-                    }
-                    this.listen(music);
-
+                    this.currentIndex = this.musics.findIndex(a => music.url_id === a.url_id);
+                    this.listen(music, null, null);
                 },
                 closeCard: function () {
                     $("#card").hide();
@@ -896,42 +942,45 @@
                      }
                      renderFrame();
                 },
-                listen2: function () {
+                startOrPause: function () {
+                    // 当前没有音乐
                     if (this.current == null || this.current.url_id == "") {
                         return;
                     }
-                    if (!$("#player")[0].paused) {
-                        $("#player")[0].pause();
-                        $("#playerBar").removeClass("rotate");
+
+                    // 播放中
+                    var player = $("#player")[0];
+                    if (!player.paused) {
+                        player.pause();
                         this.playing = false;
                     } else {
                         try{
                             this.jumpShow();
-                        }catch(e){
+                        } catch(e){
                             console.log(e);
                         }
-                        $("#player")[0].play();
-                        $("#playerBar").addClass("rotate");
+                        player.play();
                         this.playing = true;
                     }
                 },
-                listen: function (music) {
-                    $("#searchArea").hide();
-                    $("#listArea").hide();
-                    $("#playerBar").hide();
+                listen: function (music, before, after) {
+                    if (before){
+                        before();
+                    }
+
                     if (this.current != null && this.current.url_id == music.url_id) {
-                        $("#playCard").show();
-                        this.listen2();
+                        this.startOrPause();
                         return;
                     }
+
                     $("#player")[0].pause();
-                    $("#playerBar").removeClass("rotate");
-                    var auth = vue.getName(music.artist);
-                    $("#title").html(music.name);
-                    $("#author").html(auth);
+                    this.playing = false;
+                    this.playingSongName = music.name;
+                    this.playingSongSinger = vue.getName(music.artist);
 
                     var tempCurrent = this.current = music;
                     var cMusic = this.collects.find((a) => a.url_id == tempCurrent.url_id && a.source == tempCurrent.source);
+
                     if (cMusic == null) {
                         vue.exists = false;
                     } else {
@@ -963,8 +1012,9 @@
                         data: { types: 'lyric', id: music.lyric_id, source: music.source }
                     });
 
-                    $("#playControl").html("||");
-                    $("#playCard").show();
+                    if (after){
+                        after();
+                    }
                 }
             }
         });
@@ -999,9 +1049,6 @@
         // 更新时间
         $("#player")[0].addEventListener("timeupdate", function () {
             var audio = $("#player")[0];
-            if (audio.currentTime == audio.duration) {
-                $("#playControl").html("▶");
-            }
             var n = audio.currentTime / audio.duration * 100;
             if(!isNaN(Math.round(n)))
                 $("#playProgress").val(Math.round(n));
@@ -1018,7 +1065,7 @@
                     vue.listen(vue.current);
                 } else if (mode == 2) {
                     if (vue.currentIndex == vue.playList.length - 1) {
-                        $("#playerBar").removeClass("rotate");
+                        vue.playing = false;
                         return;
                     }
                     vue.currentIndex += 1;
