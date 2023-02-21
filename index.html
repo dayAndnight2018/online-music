@@ -1008,6 +1008,7 @@
                         url: 'http://www.runker.online/music/api.php',
                         type: 'post',
                         dataType: 'jsonp',  // 请求方式为jsonp
+                        async: false,
                         jsonpCallback: "lrcCallback",    // 自定义回调函数名
                         data: { types: 'lyric', id: music.lyric_id, source: music.source }
                     });
