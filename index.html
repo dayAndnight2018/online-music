@@ -263,7 +263,7 @@
             left: 50%;
             transform: translate(-50%, -50%);
             display: none;
-            z-index: 9999;
+            z-index: 999;
         }
         .left-right{
             display: flex;
@@ -308,6 +308,18 @@
             transform: translateX(-50%);
             display: none;
             z-index: 9999;
+        }
+
+        #sharePreview{
+            width: 80%;
+            border-radius: 5px;
+            margin: 0px auto;
+            position: fixed;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            display: none;
+            z-index: 99999;
         }
     </style>
 </head>
@@ -502,6 +514,10 @@
         <div id="toast" v-if="toastContent && toastContent != ''">
             {{toastContent}}
         </div>
+
+        <div id="sharePreview">
+            <a download :href="shareImage"><img :src="shareImage"/></a>
+        </div>
     </div>
 
     <script>
@@ -682,13 +698,34 @@
                 playingSongName: "歌曲名称",
                 playingSongSinger: "歌手",
 
-                toastContent: '这是一个测试toast'
+                toastContent: '这是一个测试toast',
+                shareImage: undefined,
             },
             mounted() {
                 var colls = JSON.parse(localStorage.getItem('collects'));
                 if (colls != null && colls != undefined && colls.length > 0) {
                     this.collects = colls.concat();
                 }
+
+                // // 创建 URLSearchParams 对象并传入当前页面的完整 URL
+                // const params = new URLSearchParams(window.location.search);
+                // // 通过 get() 方法获取指定参数名称的值
+                // const url = params.get('url');
+                // const name = params.get('name');
+                // const artist = params.get('artist');
+                // const source = params.get('source');
+                // const pic = params.get('pic');
+                // const lyric = params.get('lyric');
+
+                // let obj = {
+                //     url_id: url,
+                //     name: name,
+                //     artist: artist,
+                //     source: source,
+                //     pic_id: pic,
+                //     lyric_id: lyric
+                // }
+                // this.listen(obj);
             },
             methods: {
                 tooglePlayerBar: function(){
@@ -973,14 +1010,21 @@
                     // $("label.linehight").removeClass("linehight");
                 },
                 shareNow: function(){
-                    const component = document.querySelector('#shareModel'); // 根据实际情况修改选择器
-                    html2canvas(component).then((canvas) => {
-                        const dataUrl = canvas.toDataURL(); // 转换为 Data URL
-                        navigator.clipboard.writeText(dataUrl); // 将 Data URL 复制到剪贴板
-                    });
+                    // const component = document.querySelector('#shareModel'); // 根据实际情况修改选择器
+                    // html2canvas(component).then((canvas) => {
+                    //     const dataUrl = canvas.toDataURL(); // 转换为 Data URL
+                    //     // navigator.clipboard.writeText(dataUrl); // 将 Data URL 复制到剪贴板
+                    //     var screenshotImg = new Image();
+                    //     // 设置截图为 Image 对象的源
+                    //     screenshotImg.src = canvas.toDataURL("image/png");
+                    //     this.shareImage = screenshotImg.src;
+                    //     $("#shareModel").hide();
+                    // });
+                    navigator.clipboard.writeText(`https://everspringlee.gitee.io/online-music?url=${this.current.url_id}&name=${this.current.name}&artist=${this.current.artist}&source=${this.current.source}&pic=${this.current.pic_id}&lyric=${this.current.lyric_id}`);
                     this.toastContent = "已复制至剪贴板";
                     this.showToast();
                     $("#shareModel").hide();
+                    // $("#sharePreview").show();
                 },
                 jumpShow:function(){
                     //part1: 画布
@@ -1076,15 +1120,15 @@
                     $("#player")[0].pause();
                     this.playing = false;
                     this.playingSongName = music.name;
-                    this.playingSongSinger = vue.getName(music.artist);
+                    this.playingSongSinger = this.getName(music.artist);
 
                     var tempCurrent = this.current = music;
                     var cMusic = this.collects.find((a) => a.url_id == tempCurrent.url_id && a.source == tempCurrent.source);
 
                     if (cMusic == null) {
-                        vue.exists = false;
+                        this.exists = false;
                     } else {
-                        vue.exists = true;
+                        this.exists = true;
                     }
 
                     $.ajax({
@@ -1146,6 +1190,26 @@
             jsonpCallback: "searchCallback2",    // 自定义回调函数名
             data: { types: 'search', count: 20, source: 'netease', pages: 1, name: "最新" }
         });
+
+        // 创建 URLSearchParams 对象并传入当前页面的完整 URL
+        const params = new URLSearchParams(window.location.search);
+        // 通过 get() 方法获取指定参数名称的值
+        const url = params.get('url');
+        const name = params.get('name');
+        const artist = params.get('artist');
+        const source = params.get('source');
+        const pic = params.get('pic');
+        const lyric = params.get('lyric');
+
+        let obj = {
+            url_id: url,
+            name: name,
+            artist: artist,
+            source: source,
+            pic_id: pic,
+            lyric_id: lyric
+        }
+        vue.listen(obj);
 
         // 更新时间
         $("#player")[0].addEventListener("timeupdate", function () {
