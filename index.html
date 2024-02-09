@@ -1009,6 +1009,31 @@
                     // $("label.linehight").addClass("labeld");
                     // $("label.linehight").removeClass("linehight");
                 },
+                 copyToClipboard: function(text) {
+                    // 检查浏览器是否支持 Clipboard API
+                    if (!navigator.clipboard) {
+                        // 如果不支持，则使用传统的 document.execCommand("copy") 方式
+                        const textArea = document.createElement("textarea");
+                        textArea.value = text;
+                        textArea.style.position = "fixed";
+                        document.body.appendChild(textArea);
+                        textArea.focus();
+                        textArea.select();
+                        document.execCommand("copy");
+                        document.body.removeChild(textArea);
+                        return;
+                    }                   
+                    // 使用 Clipboard API 复制内容到剪切板
+                    navigator.clipboard.writeText(text).then(
+                        function() {
+                        console.log("复制成功");
+                        },
+                        function() {
+                        console.log("复制失败");
+                        }
+                    );
+                },
+
                 shareNow: function(){
                     // const component = document.querySelector('#shareModel'); // 根据实际情况修改选择器
                     // html2canvas(component).then((canvas) => {
@@ -1020,7 +1045,7 @@
                     //     this.shareImage = screenshotImg.src;
                     //     $("#shareModel").hide();
                     // });
-                    navigator.clipboard.writeText(`https://everspringlee.gitee.io/online-music?url=${this.current.url_id}&name=${this.current.name}&artist=${this.current.artist}&source=${this.current.source}&pic=${this.current.pic_id}&lyric=${this.current.lyric_id}`);
+                    this.copyToClipboard(`https://everspringlee.gitee.io/online-music?url=${this.current.url_id}&name=${this.current.name}&artist=${this.current.artist}&source=${this.current.source}&pic=${this.current.pic_id}&lyric=${this.current.lyric_id}`);
                     this.toastContent = "已复制至剪贴板";
                     this.showToast();
                     $("#shareModel").hide();
