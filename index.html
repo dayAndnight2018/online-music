@@ -1033,7 +1033,9 @@
                         }
                     );
                 },
-
+                encode: function(source){
+                    return encodeURIComponent(source);
+                },
                 shareNow: function(){
                     // const component = document.querySelector('#shareModel'); // 根据实际情况修改选择器
                     // html2canvas(component).then((canvas) => {
@@ -1045,7 +1047,7 @@
                     //     this.shareImage = screenshotImg.src;
                     //     $("#shareModel").hide();
                     // });
-                    this.copyToClipboard(`https://everspringlee.gitee.io/online-music?url=${this.current.url_id}&name=${this.current.name}&artist=${this.current.artist}&source=${this.current.source}&pic=${this.current.pic_id}&lyric=${this.current.lyric_id}`);
+                    this.copyToClipboard(this.encode(`https://everspringlee.gitee.io/online-music?url=${this.current.url_id}&name=${this.current.name}&artist=${this.current.artist}&source=${this.current.source}&pic=${this.current.pic_id}&lyric=${this.current.lyric_id}`));
                     this.toastContent = "已复制至剪贴板";
                     this.showToast();
                     $("#shareModel").hide();
@@ -1204,6 +1206,9 @@
             return m + ":" + s;
         }
 
+        function decode(source){
+            return decodeURIComponent(source);
+        }
 
         $("#searchInput").val("最新");
         $.ajax({
@@ -1217,7 +1222,7 @@
         });
 
         // 创建 URLSearchParams 对象并传入当前页面的完整 URL
-        const params = new URLSearchParams(window.location.search);
+        const params = new URLSearchParams(decode(window.location.search));
         // 通过 get() 方法获取指定参数名称的值
         const url = params.get('url');
         const name = params.get('name');
@@ -1234,7 +1239,10 @@
             pic_id: pic,
             lyric_id: lyric
         }
+
+        vue.showPlayer();
         vue.listen(obj);
+        // vue.listen(obj);
 
         // 更新时间
         $("#player")[0].addEventListener("timeupdate", function () {
