@@ -1231,18 +1231,19 @@
         const pic = params.get('pic');
         const lyric = params.get('lyric');
 
-        let obj = {
-            url_id: url,
-            name: name,
-            artist: artist,
-            source: source,
-            pic_id: pic,
-            lyric_id: lyric
-        }
+        if (url && name && artist && source && pic){
+            let obj = {
+                url_id: url,
+                name: name,
+                artist: artist,
+                source: source,
+                pic_id: pic,
+                lyric_id: lyric
+            }
 
-        vue.showPlayer();
-        vue.listen(obj);
-        // vue.listen(obj);
+            vue.showPlayer();
+            vue.listen(obj);
+        }
 
         // 更新时间
         $("#player")[0].addEventListener("timeupdate", function () {
