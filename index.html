@@ -1047,7 +1047,7 @@
                     //     this.shareImage = screenshotImg.src;
                     //     $("#shareModel").hide();
                     // });
-                    this.copyToClipboard(this.encode(`https://everspringlee.gitee.io/online-music?url=${this.current.url_id}&name=${this.current.name}&artist=${this.current.artist}&source=${this.current.source}&pic=${this.current.pic_id}&lyric=${this.current.lyric_id}`));
+                    this.copyToClipboard('https://everspringlee.gitee.io/online-music' + this.encode(`?url=${this.current.url_id}&name=${this.current.name}&artist=${this.current.artist}&source=${this.current.source}&pic=${this.current.pic_id}&lyric=${this.current.lyric_id}`));
                     this.toastContent = "已复制至剪贴板";
                     this.showToast();
                     $("#shareModel").hide();
