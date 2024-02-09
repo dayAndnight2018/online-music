@@ -11,7 +11,7 @@
     <script src="js/vue.js"></script>
     <script src="js/vueResource.js"></script>
     <script src="js/jquery.js"></script>
-    <script src="capture.js"></script>
+    <script src="js/capture.js"></script>
      
     <!-- 标题 -->
     <title>云音乐</title>
@@ -252,12 +252,70 @@
             height: 40px; 
             border-radius: 50%;
         }
+
+        #shareModel{
+            background: white;
+            width: 80%;
+            border-radius: 5px;
+            margin: 0px auto;
+            position: fixed;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            display: none;
+            z-index: 9999;
+        }
+        .left-right{
+            display: flex;
+            flex-direction: row;
+            padding: 1rem;
+        }
+        .right{
+            margin: 0.5rem;
+        }
+        .singer{
+            font-size: 0.8rem;
+        }
+
+        .shareTitle{
+            background: whitesmoke;
+            color: black;
+            padding: 0.5rem;
+        }
+
+        .shareBtn{
+            background: var(--global-back-color);
+            color: var(--global-fore-color);
+            font-size: 0.8rem;
+            border-radius: 25%;
+            border: none;
+            padding: 0.25rem;
+            margin: 0.5rem;
+            position: absolute;
+            right: 0px;
+            bottom: 0px;
+        }
+
+        #toast{
+            background: gray;
+            color: white;
+            font-size: 0.5rem;
+            padding: 0.1rem;
+            border-radius: 5px;
+            position: absolute;
+            left: 50%;
+            bottom: 10px;
+            transform: translateX(-50%);
+            display: none;
+            z-index: 9999;
+        }
     </style>
 </head>
 
 <body>
     <div id="app">
 
+        <!-- 此处是播放器卡片 -->
         <div id="playerBar">
             <div class="playerBarItem">
                 <img id="playingBatImage" :class="{'rotate': playing}" :src="playingSongImage" @click="showPlayer()" />
@@ -291,7 +349,7 @@
             class="ccard" id="card">
             <div
                 style="min-height: 30px;padding:5px;width:100%;background:var(--global-back-color);display: flex;flex-direction: row;justify-content: space-between;position: sticky;top: 0px;">
-                <div style="font-size: 14px;margin:5px;color:black">
+                <div style="font-size: 14px;margin:5px;color:white">
                     Collects
                 </div>
                 <div style="display: flex;justify-content: center;align-items: center;">
@@ -423,6 +481,27 @@
             </div>
         </div>
 
+        <div id="shareModel">
+            <div class="shareTitle">
+                歌曲分享
+            </div>
+            <div class="left-right">
+                <div class="left">
+                    <img :src="playingSongImage" style="width: 80px; height: 80px;border-radius:10px" />
+                </div>
+                <div class="right">
+                    <div>{{playingSongName}}</div>
+                    <div class="singer">{{playingSongSinger}}</div>
+                </div>
+            </div>
+            <div>
+                <button class="shareBtn" @click="shareNow">分享</button>
+            </div>
+        </div>
+
+        <div id="toast" v-if="toastContent && toastContent != ''">
+            {{toastContent}}
+        </div>
     </div>
 
     <script>
@@ -602,6 +681,8 @@
                 playingSongImage: "https://p1.music.126.net/6y-UleORITEDbvrOLV0Q8A==/5639395138885805.jpg",
                 playingSongName: "歌曲名称",
                 playingSongSinger: "歌手",
+
+                toastContent: '这是一个测试toast'
             },
             mounted() {
                 var colls = JSON.parse(localStorage.getItem('collects'));
@@ -645,6 +726,13 @@
                 hideLyric:function(){
                     $("#lyric").show();
                     $("#jump").hide();
+                },
+                showToast: function() {
+                    $("#toast").show();
+                    setTimeout(()=>{
+                        this.toastContent = undefined;
+                        $("#toast").hide();
+                    }, 2000);
                 },
                 toggleJump:function(){
                     if ($("#jump").is(":visible")){
@@ -872,18 +960,28 @@
                     $("#playerBar").show();
                 },
                 share:function(){
-                    $("label.labeld").addClass("linehight");
-                    $("label.labeld").removeClass("labeld");
-                    // var htmlDom = document.getElementById("playCardContent");
-                    var htmlDom = document.body;
-                    html2canvas(htmlDom,{useCORS:true,logging:true, scrollY: 0, scrollX: 0}).then(function(canvas) {
-                        var base64 = canvas.toDataURL("image/jpeg");
-                        console.log(base64 );//生成本地base64图片
-                    });
-                    $("label.linehight").addClass("labeld");
-                    $("label.linehight").removeClass("linehight");
+                    $("#shareModel").show();
+                    // $("label.labeld").addClass("linehight");
+                    // $("label.labeld").removeClass("labeld");
+                    // // var htmlDom = document.getElementById("playCardContent");
+                    // var htmlDom = document.body;
+                    // html2canvas(htmlDom,{useCORS:true,logging:true, scrollY: 0, scrollX: 0}).then(function(canvas) {
+                    //     var base64 = canvas.toDataURL("image/jpeg");
+                    //     console.log(base64 );//生成本地base64图片
+                    // });
+                    // $("label.linehight").addClass("labeld");
+                    // $("label.linehight").removeClass("linehight");
                 },
-
+                shareNow: function(){
+                    const component = document.querySelector('#shareModel'); // 根据实际情况修改选择器
+                    html2canvas(component).then((canvas) => {
+                        const dataUrl = canvas.toDataURL(); // 转换为 Data URL
+                        navigator.clipboard.writeText(dataUrl); // 将 Data URL 复制到剪贴板
+                    });
+                    this.toastContent = "已复制至剪贴板";
+                    this.showToast();
+                    $("#shareModel").hide();
+                },
                 jumpShow:function(){
                     //part1: 画布
                      var canvas = document.getElementById("jump");
