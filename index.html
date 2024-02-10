@@ -302,7 +302,7 @@
             font-size: 0.5rem;
             padding: 0.1rem;
             border-radius: 5px;
-            position: absolute;
+            position: fixed;
             left: 50%;
             bottom: 10px;
             transform: translateX(-50%);
@@ -485,7 +485,7 @@
                 </div>
 
                 <div>
-                    <audio autoplay="autoplay" crossOrigin="anonymous" controls="controls" id="player" style="display: none;">
+                    <audio autoplay="autoplay" crossOrigin="anonymous" controls="controls" id="player" style="display: none;" muted>
                         <source id="source">
                         </source>
                     </audio>
@@ -511,7 +511,7 @@
             </div>
         </div>
 
-        <div id="toast" v-if="toastContent && toastContent != ''">
+        <div id="toast">
             {{toastContent}}
         </div>
 
@@ -884,6 +884,9 @@
                     }
                     return name;
                 },
+                getArtists: function(names){
+                    return names.split("&");
+                },
                 getLength: function (duration) {
                     var dur = duration / 1000;
                     return parseInt(dur / 60) + ":" + parseInt(dur % 60);
@@ -1047,7 +1050,7 @@
                     //     this.shareImage = screenshotImg.src;
                     //     $("#shareModel").hide();
                     // });
-                    this.copyToClipboard('https://everspringlee.gitee.io/online-music?' + this.encode(`url=${this.current.url_id}&name=${this.current.name}&artist=${this.current.artist}&source=${this.current.source}&pic=${this.current.pic_id}&lyric=${this.current.lyric_id}`));
+                    this.copyToClipboard('https://everspringlee.gitee.io/online-music?' + this.encode(`url=${this.current.url_id}&name=${this.current.name}&artist=${this.getName(this.current.artist)}&source=${this.current.source}&pic=${this.current.pic_id}&lyric=${this.current.lyric_id}`));
                     this.toastContent = "已复制至剪贴板";
                     this.showToast();
                     $("#shareModel").hide();
@@ -1236,7 +1239,7 @@
             let obj = {
                 url_id: url,
                 name: name,
-                artist: artist,
+                artist: vue.getArtists(artist),
                 source: source,
                 pic_id: pic,
                 lyric_id: lyric
@@ -1244,6 +1247,7 @@
 
             vue.showPlayer();
             vue.listen(obj);
+            vue.startOrPause();
         }
 
         // 更新时间
