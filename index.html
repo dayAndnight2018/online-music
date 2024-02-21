@@ -569,8 +569,8 @@
             if(rdata.length > 0){
                 if(rdata[0].source == "netease"){
                     rdata.forEach(function(item, index){
-                        vue.neteaseMusics.splice(-1,0,item);
-                        vue.musics.splice(-1,0,item);
+                        vue.neteaseMusics.push(item);
+                        vue.musics.splice(item);
                     })
                 }
             }   
