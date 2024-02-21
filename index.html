@@ -570,7 +570,7 @@
                 if(rdata[0].source == "netease"){
                     rdata.forEach(function(item, index){
                         vue.neteaseMusics.push(item);
-                        vue.musics.splice(item);
+                        vue.musics.push(item);
                     })
                 }
             }   
