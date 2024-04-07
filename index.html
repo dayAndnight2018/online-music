@@ -618,17 +618,19 @@
                 }
                 return;
             }
+
+            vue.playingSongUrl = rdata.url;
             $("#player").attr("crossOrigin", "anonymous");
             $("#player").attr("src", rdata.url);
-            $("#download").attr("download", $("#title").html());
-            $("#download").attr("href", rdata.url + "?response-content-type=application/octet-stream");
+            // $("#download").attr("download", $("#title").html());
+            // $("#download").attr("href", rdata.url + "?response-content-type=application/octet-stream");
 
             vue.startOrPause();
         };
 
         function downloadMp3() {
-            let url = $("#download").attr("href");
-            let name = $("#download").attr("download");
+            let url = vue.playingSongUrl;
+            let name = $("#title").html();
             // const link = document.createElement('a');
             // link.setAttribute('download', name);
             // link.setAttribute('href', url);
@@ -727,6 +729,7 @@
                 playingSongImage: "https://p1.music.126.net/6y-UleORITEDbvrOLV0Q8A==/5639395138885805.jpg",
                 playingSongName: "歌曲名称",
                 playingSongSinger: "歌手",
+                playingSongUrl: "",
 
                 toastContent: '这是一个测试toast',
                 shareImage: undefined,
