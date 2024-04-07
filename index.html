@@ -1278,7 +1278,13 @@
                 } else if (mode == 3) {
                     vue.listen(vue.playList[Math.floor((Math.random() * vue.playList.length))]);
                 }
+                return;
             }
+            vue.playing = false;
+        };
+
+        document.getElementById("player").onpause = function () {
+            vue.playing = false;
         };
 
         //点击进度条位置
