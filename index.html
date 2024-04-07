@@ -621,7 +621,7 @@
             $("#player").attr("crossOrigin", "anonymous");
             $("#player").attr("src", rdata.url);
             $("#download").attr("download", $("#title").html());
-            $("#download").attr("href", rdata.url);
+            $("#download").attr("href", rdata.url + "?response-content-type=application/octet-stream");
 
             vue.startOrPause();
         };
