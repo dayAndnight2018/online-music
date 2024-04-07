@@ -629,17 +629,30 @@
         function downloadMp3() {
             let url = $("#download").attr("href");
             let name = $("#download").attr("download");
-            const link = document.createElement('a');
-            link.setAttribute('download', name);
-            link.setAttribute('href', url);
-            Object.assign(link.style, {
-                position: 'absolute',
-                top: 0,
-                opacity: 0,
-            });
-            document.body.appendChild(link);
-            link.click();
-            link.remove();
+            // const link = document.createElement('a');
+            // link.setAttribute('download', name);
+            // link.setAttribute('href', url);
+            // Object.assign(link.style, {
+            //     position: 'absolute',
+            //     top: 0,
+            //     opacity: 0,
+            // });
+            // document.body.appendChild(link);
+            // link.click();
+            // link.remove();
+
+            const x = new window.XMLHttpRequest();
+            x.open('GET', url, true);
+            x.responseType = 'blob';
+            x.onload = () => {
+                const url = window.URL.createObjectURL(x.response);
+                const a = document.createElement('a');
+                a.href = url;
+                a.download = name;
+                a.click();
+            };
+            x.send();
+            return false;
         };
 
         function lrcCallback(rdata) {
