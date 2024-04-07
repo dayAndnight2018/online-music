@@ -433,7 +433,7 @@
                 </div>
 
                 <div style="text-align: center;width: 100%;margin-top: 20px;">
-                    <a id='download' style="display:block;margin:10px"><img id="image"
+                    <a id='download' style="display:block;margin:10px" onclick="javascript: downloadMp3()"><img id="image"
                             :src="playingSongImage"
                             style="width: 200px; height: 200px;box-shadow: 1px 1px 2px 2px white;border-radius:50%" /></a>
                 </div>
@@ -624,6 +624,22 @@
             $("#download").attr("href", rdata.url + "?response-content-type=application/octet-stream");
 
             vue.startOrPause();
+        };
+
+        function downloadMp3() => {
+            let url = $("#download").attr("href");
+            let name = $("#download").attr("download");
+            const link = document.createElement('a');
+            link.setAttribute('download', name);
+            link.setAttribute('href', url);
+            Object.assign(link.style, {
+                position: 'absolute',
+                top: 0,
+                opacity: 0,
+            });
+            document.body.appendChild(link);
+            link.click();
+            link.remove();
         };
 
         function lrcCallback(rdata) {
