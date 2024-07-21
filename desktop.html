@@ -1,180 +1,1320 @@
 <html>
-	<meta charset="utf-8" />
-	<meta name="viewport" content="width=device-width, initial-scale=1"/>
-	<link rel="stylesheet" href="https://cdn.staticfile.org/font-awesome/4.7.0/css/font-awesome.css">
-	<link rel="stylesheet" href="css/bulma.css"/>
-	<script src="js/vue.js"></script>
-	<script src="js/vueResource.js"></script>
-	<script src="js/jquery.js"></script>
-	<head>
-		<title>云音乐</title>
-		<style type="text/css">
-			.shortcut{
-				width: 100px;
-				height: 100px;
-			}
-			audio::-webkit-media-controls-timeline-container{
-				color: red;
-			}
-			.list::-webkit-scrollbar {
-    			display: none;
-			}
- 
-		</style>
-	</head>
-	<body>	
-		<div>
-			<div id="app">
-				<h2 class="is-size-3 has-text-danger has-text-centered has-text-weight-bold" style="margin: 40px auto;">云音乐</h2>
-					<div style="margin-top: 20px;display: flex;flex-direction: row;justify-content: center;">
-							<input class="input" type="text" placeholder="请输入歌曲名称" style="width: 50%;" id="searchInput" v-on:keyup.enter="search()"/>
-							<span style="padding-left: 20px;"><button class="button is-info" @click="search()">搜索</button></span>
-					</div>
-					<div style="width:80%;display: flex;flex-direction: row;margin: 40px auto;justify-content: center;">
-					
-					<div style="flex: 3;">
-						<div >
-							<a >
-								<img class="shortcut" src="http://p4.music.126.net/N2whh2Prf0l8QHmCpShrcQ==/19140298416347251.jpg?param=150y150" />
-							</a>
 
-							<a>
-								<img class="shortcut" src="http://p4.music.126.net/2klOtThpDQ0CMhOy5AOzSg==/18878614648932971.jpg?param=150y150" />
-							</a>
+<head>
+    <!-- 引入各种库 -->
+    <meta charset="utf-8" name="viewport"
+        content="width=device-width,initial-scale=1,maximum-scale=1,user-scalable=no" />
+    <meta http-equiv="Content-Security-Policy" content="upgrade-insecure-requests" />
+    <link rel="stylesheet" href="//dayandnight2018.github.io/lib/css/foundation-icons.css" />
+    <link rel="stylesheet" href="https://cdn.staticfile.org/font-awesome/4.7.0/css/font-awesome.css" />
+    <link rel="stylesheet" href="https://dayandnight2018.github.io/lib/css/bulma.css" />
+    <script src="https://dayandnight2018.github.io/lib/js/vue.js"></script>
+    <script src="https://dayandnight2018.github.io/lib/js/vueResource.js"></script>
+    <script src="https://dayandnight2018.github.io/lib/js/jquery.js"></script>
+    <script src="js/capture.js"></script>
 
-							<a>
-								<img class="shortcut" src="http://p4.music.126.net/JPh-zekmt0sW2Z3TZMsGzA==/18967675090783713.jpg?param=150y150" />
-							</a>
+    <!-- 标题 -->
+    <title>云音乐</title>
+    <style>
+        :root {
+            --global-fore-color: white;
+            --global-back-color: #00cc66;
+            /* --global-back-color: #2a2c2e; */
+        }
 
-							<a>
-								<img class="shortcut" src="http://p4.music.126.net/N2HO5xfYEqyQ8q6oxCw8IQ==/18713687906568048.jpg?param=150y150" />
-							</a>
-							<a>
-								<img class="shortcut" src="http://p4.music.126.net/DrRIg6CrgDfVLEph9SNh7w==/18696095720518497.jpg?param=150y150" />
-							</a>
-							<a>
-								<img class="shortcut" src="http://p4.music.126.net/GhhuF6Ep5Tq9IEvLsyCN7w==/18708190348409091.jpg?param=150y150" />
-							</a>
-							<a>
-								<img class="shortcut" src="http://p4.music.126.net/11Tw_r2wCvMZY--TtTvuGw==/1416170990976003.jpg?param=150y150" />
-							</a>
-							<a>
-								<img class="shortcut" src="http://p4.music.126.net/sBzD11nforcuh1jdLSgX7g==/18740076185638788.jpg?param=150y150" />
-							</a>
-						</div>
-					</div>
+        /* 图片旋转 */
+        /* #image {
+            animation: myfirst 20s linear 2s infinite alternate;
+            -webkit-animation: myfirst 20s linear 0s infinite normal;
+            -moz-animation: myfirst 20s linear 0s infinite normal;
+            -o-animation: myfirst 20s linear 0s infinite normal;
+        } */
 
-					<div style="flex: 7;">
-						
-						<div style="margin: 0px auto; max-height: 500px; overflow: scroll;" class="list">
-							<table class="table is-scripted is-hoverable" style="margin: 0 auto;">
-								<thead v-if="musics.length>0">
-									<th>歌曲名称</th>
-									<th>演唱者</th>
-								</thead>
-								<tbody style="overflow-y: scroll;">
-									<tr v-for="music in musics" @click="listen(music)">
-										<td>{{music.name}}</td>
-										<td>{{getName(music.artist)}}</td>
-									</tr>							
-								</tbody>
-							</table>
-							
-						</div>
-					</div>
-				</div>
-				
+        @keyframes myfirst {
+            0% {
+                transform: rotate(0deg);
+            }
 
-					<div style="width:80%;left:0;right:0;margin:0 auto;bottom:2px;position: fixed;z-index: 10;border-radius:0px 8px 8px 8px;  box-shadow: 3px 3px 5px 5px silver;display: flex; flex-direction: row;justify-content: flex-start;align-items: center;height:100px;background: #ff3333;padding: 10px;">					
-						<img id="image" src="https://p1.music.126.net/6y-UleORITEDbvrOLV0Q8A==/5639395138885805.jpg" style="width: 64px; height: 64px;margin: 10px;"/>
-						<div style="display: flex;flex-direction: column;width: 100%;height: 60px;">
-							<div style="display: flex;flex-direction: row; margin: 3px;color: white"><span><h4 id="title">音乐名称</h4></span>-<span id="author">演唱者</span></div>
-							<audio autoplay="autoplay" controls="controls"  style="width: 100%;height: 40px;" id="player">
-								<source id="source"></source>
-							</audio>
-						</div>
-					</div>
-			</div>
-		</div>
-		<script>
+            100% {
+                transform: rotate(360deg);
+            }
+        }
 
-			function searchCallback(rdata) {
-					vue.musics = rdata;
-			};
-			function picCallback(rdata) {
-					$("#image").attr("src",rdata.url);
-			};
-			function songCallback(rdata) {
-					$("#source").attr("src",rdata.url);
-					$("#player")[0].load();
-					$("#player")[0].play();
-			};
+        /* 旋转 */
+        /* .rotate {
+            animation: myfirst 20s linear 2s infinite alternate;
+            -webkit-animation: myfirst 20s linear 0s infinite normal;
+            -moz-animation: myfirst 20s linear 0s infinite normal;
+            -o-animation: myfirst 20s linear 0s infinite normal;
+        } */
 
-			var vue = new Vue({
-				el:"#app",
-				data:{
-					musics:[]
-				},
-				methods:{
-					search: function(){
-						var text = $("#searchInput").val();
-						if(text == "")
-						{
-							alert("请输入歌曲名称!");
-							return;
-						}
+        html,
+        body {
+            width: 100%;
+            height: 100%;
+        }
 
-						$.ajax({
-						    url: 'http://www.runker.vip/music/api.php',
-						    type: 'post',
-						    dataType: 'jsonp',  // 请求方式为jsonp
-						    jsonpCallback: "searchCallback",    // 自定义回调函数名
-						    data: {types:'search',count:20,source:'netease',pages:1,name:text}
-						});
+        tbody::-webkit-scrollbar{
+            display: none;
+        }
 
-					},
-					
-					getName: function(names){
-						var name = "";
-						for(var i = 0; i < names.length; i++){
-							name += names[i];
-							if(i != names.length-1){
-								name += "&"
-							}
-						}
-						return name;
-					},
-					getLength: function(duration){
-						var dur = duration / 1000;
-						return parseInt(dur / 60) +":"+ parseInt(dur % 60);
-					},
-					listen: function(music){
-						$("#title").html(music.name);
-						var auth = vue.getName(music.artist);
-						$("#author").html(auth);
+        .mactive {
+            color: var(--global-back-color) !important;
+        }
 
-						$.ajax({
-						    url: 'http://www.runker.vip/music/api.php',
-						    type: 'post',
-						    dataType: 'jsonp',  // 请求方式为jsonp
-						    jsonpCallback: "picCallback",    // 自定义回调函数名
-						    data: {types:'pic',id:music.pic_id,source:'netease'}
-						});
+        .mnormal {
+            color: grey;
+        }
 
-							
-						$.ajax({
-						    url: 'http://www.runker.vip/music/api.php',
-						    type: 'post',
-						    dataType: 'jsonp',  // 请求方式为jsonp
-						    jsonpCallback: "songCallback",    // 自定义回调函数名
-						    data: {types:'url',id:music.url_id,source:'netease'}
-						});
-												
-					}
-				}
-			});
-			
-			
-		</script>
-	</body>
+        tr{
+            border-top: 1px solid rgba(255, 255, 255, 0.1) !important;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.1) !important;
+        }
+
+        .ccard {
+            position: fixed;
+            top: 50%;
+            left: 50%;
+            width: 50%;
+            -webkit-transform: translateX(-50%) translateY(-50%);
+            -moz-transform: translateX(-50%) translateY(-50%);
+            -ms-transform: translateX(-50%) translateY(-50%);
+            transform: translateX(-50%) translateY(-50%);
+        }
+
+        .linehight {
+            font-size: 18px !important;
+            font-weight: bold;
+            color: white !important;
+            background-image: none !important;
+            background: transparent !important;
+        }
+
+        .table td,
+        .table th {
+            font-size: 0.75rem !important;
+        }
+
+        .table td{
+            border-top: none !important;
+        }
+
+        .table td{
+            border-bottom: 1px solid rgba(255, 255, 255, 0.1) !important;
+        }
+
+        #app {
+            min-width: 100%;
+            min-height: 100%;
+            // background-color: #555544;
+            background-color: var(--global-back-color);
+        }
+
+        #playerBar {
+            position: fixed;
+            right: 10px;
+            bottom: 30px;
+            z-index: 997;
+
+            box-shadow: 1px 1px 2px 2px silver;
+            border-radius: 5px 20px 20px 20px;
+            padding: 5px;
+            max-width: 150px;
+
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            background: var(--global-fore-color);
+        }
+
+        .playerBarItem {
+            display: flex;
+            flex-direction: row;
+            align-items: center;
+            width: 100%;
+        }
+
+        .playerTag {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            color: white;
+            font-size: 50px;
+            // background: #ffdc57;
+            background: var(--global-back-color);
+            width: 100%;
+            height: 100%;
+            border-radius: 50%;
+        }
+
+        .lrcPart {
+            width: 100%;
+            min-height: 200px;
+            color: white;
+            text-align: center;
+            overflow-y: hidden;
+            margin-top: 50px;
+        }
+
+        #lyric {
+            text-decoration: none;
+            font-size: 1rem;
+            font-family: 楷体;
+            overflow-y: hidden;
+        }
+
+        .playCardPart {
+            width: 100%;
+            padding: 5px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            bottom: 0;
+            left: 0;
+        }
+
+        #str {
+            float: left;
+            margin-left: 5px;
+            font-size: .25rem;
+        }
+
+        #listArea {
+            width: 100%;
+            height: 100%;
+            overflow: hidden;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            z-index: 777;
+        }
+
+        #playCard {
+            z-index: 888;
+            filter: blur(0.5px);
+            height: 100%;
+            width: 100%;
+            position: relative;
+        }
+
+        #searchArea {
+            position: sticky;
+            top: 0px;
+            display: flex;
+            flex-direction: row;
+            justify-content: space-around;
+            width: 100%;
+            padding: 10px;
+            border-top: 0px;
+            z-index: 777;
+        }
+
+        .playControl {
+            font-size: 25px;
+            /*color: #666;*/
+            color: white;
+            font-weight: bolder;
+            // background: #F47983;
+            text-align: center;
+        }
+
+        .playControlTransparent {
+            color: white !important;
+        }
+
+        .playControlWrapper {
+            margin: 0px 8px;
+            display: flex;
+            flex-direction: row;
+            justify-content: center;
+            align-items: center;
+            padding: 10px;
+            background: var(--global-back-color);
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+        }
+
+        .noBackgroundWrapper {
+            background: transparent !important;
+            border: none !important;
+            color: white !important;
+        }
+
+        progress::-webkit-progress-value {
+
+            background-color: var(--global-back-color) !important;
+
+        }
+
+        #playingBarTitle {
+            font-size: 12px;
+            text-align: center;
+            text-overflow: ellipsis;
+            white-space: nowrap;
+            overflow: hidden;
+            margin: 0px 5px;
+        }
+
+        #playingBatImage {
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+        }
+
+        .table.is-hoverable tbody tr:not(.is-selected):hover {
+            background-color: green;
+        }
+
+        #shareModel {
+            background: white;
+            width: 80%;
+            border-radius: 5px;
+            margin: 0px auto;
+            position: fixed;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            display: none;
+            z-index: 999;
+        }
+
+        .left-right {
+            display: flex;
+            flex-direction: row;
+            padding: 1rem;
+        }
+
+        .right {
+            margin: 0.5rem;
+        }
+
+        .singer {
+            font-size: 0.8rem;
+        }
+
+        .shareTitle {
+            background: whitesmoke;
+            color: black;
+            padding: 0.5rem;
+        }
+
+        .shareBtn {
+            background: var(--global-back-color);
+            color: var(--global-fore-color);
+            font-size: 0.8rem;
+            border-radius: 25%;
+            border: none;
+            padding: 0.25rem;
+            margin: 0.5rem;
+            position: absolute;
+            right: 0px;
+            bottom: 0px;
+        }
+
+        #toast {
+            background: gray;
+            color: white;
+            font-size: 0.5rem;
+            padding: 0.1rem;
+            border-radius: 5px;
+            position: fixed;
+            left: 50%;
+            bottom: 10px;
+            transform: translateX(-50%);
+            display: none;
+            z-index: 9999;
+        }
+
+        #sharePreview {
+            width: 80%;
+            border-radius: 5px;
+            margin: 0px auto;
+            position: fixed;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            display: none;
+            z-index: 99999;
+        }
+    </style>
+</head>
+
+<body>
+    <div id="app">
+        <!-- 播放器 -->
+        <div id="playCard">
+            <div style="padding: 1rem; background: rgba(0,0,0,0.7);z-index: 999;height: 100%;width: 100%;filter: drop-shadow(2px 4px 6px Silver); display: flex; flex-direction: column;justify-content: space-between;"
+                id="playCardContent">
+                <div style="width: 100%; height: 100%; overflow: hidden; flex:1; display: flex; flex-direction: row; align-items: flex-start; justify-content: space-between">
+                    <div style="width: 100%; height: 100%; position: relative; padding-top: 2rem; flex: 5;">
+                        <div style="width: 100%;">
+                            <div
+                                style="color: white;font-size: 1.5rem;padding:5px 50px;text-align: center;width: 100%;text-overflow: ellipsis;white-space: nowrap;overflow: hidden;">
+                                {{playingSongName}}</div>
+                            <div style="color: white;font-size: 1.2rem;padding:5px;text-align: center;width: 100%;">
+                                {{playingSongSinger}}
+                            </div>
+                        </div>
+
+                        <div style="text-align: center;width: 100%;margin-top: 20px;">
+                            <a id='download' style="display:block;margin:10px" onclick="javascript: downloadMp3()"><img
+                                    id="image" :src="playingSongImage"
+                                    style="width: 150px; height: 150px;border-radius:50%" /></a>
+                        </div>
+
+                        <!-- 歌词部分 -->
+                        <div class="lrcPart">
+                            <ul id="lyric">
+                            </ul>
+                        </div>
+                    </div>
+                    <div style="flex-shrink: 0; height: 100%;overflow: hidden; display: flex;flex-direction: column; flex: 5;">
+                        <!-- 搜索框 -->
+                        <div id="searchArea" class="field has-addons has-addons-centered" style="flex-shrink: 0;">
+                            <p class="control is-expanded">
+                                <input class="input is-rounded" type="text" placeholder="请输入歌曲名称" id="searchInput"
+                                    v-on:keyup.enter="search()" />
+                            </p>
+                            <p class="control">
+                                <button class="button" @click="search()"
+                                    style="background: var(--global-back-color); color: white;">搜索</button>
+                            </p>
+                        </div>
+
+                        <div id="listArea">
+                            <table class="table is-scripted is-hoverable is-fullwidth" style="background: transparent; color: white; width: 100%; height: 100%; display: flex; flex-direction: column; align-items: center;">
+                                <thead style="width: 100%;" v-if="musics.length>0">
+                                    <tr style="width: 100%; display: flex; flex-direction: row; justify-content: space-evenly;">
+                                        <th style="font-size: 16px !important; color: white; width: 100%;">歌曲</th>
+                                        <th style="font-size: 16px !important; color: white; width: 100%;">歌手</th>
+                                    </tr>
+                                </thead>
+                                <tbody style="overflow-y: scroll;margin: 0 auto;width: 100%;height: 100%;">
+                                    <tr @click="searchListen(music)" style="width: 100%;display: flex; flex-direction: row; justify-content: space-evenly;" v-for="music in musics">
+                                        <td
+                                            style="word-wrap: break-word;word-break: break-all;font-size: 16px !important;width: 100%;">
+                                            {{music.name}}</td>
+                                        <td
+                                            style="word-wrap: break-word;word-break: break-all;font-size: 12px !important;width: 100%;">
+                                            {{getName(music.artist)}}</td>
+                                    </tr>
+                                    <tr style="width: 100% !important; display: flex;">
+                                        <td colspan="2" style="text-align:center;width: 100% !important;"><a
+                                                style="text-align:center;width:100% !important;color:var(--global-back-color);"
+                                                v-on:click="next()">···加载更多···</a></td>
+                                    </tr>
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+                <div style="flex-shrink: 0;">
+                    <div class="playCardPart">
+                        <div style="width: 100%;padding: 2px 5px 2px 5px;margin: 0px auto;">
+                            <P id="str" style="color:white;font-size: 1rem;">00:00</P>
+                            <P id="end" style="float: right;margin-right: 5px;font-size: 1rem; color:white">00:00
+                            </P>
+                            <progress class="progress is-small" value="0" max="100" id="playProgress"
+                                style="height: 5px;width: 98%;margin: 0 auto; color: var(--global-back-color); background-color: transparent !important;">|</progress>
+                        </div>
+                        <div style="padding: 5px;display: flex;flex-direction: row;align-items: center;width: 100%;">
+                            <div class="playControlWrapper noBackgroundWrapper">
+                                <i class="fa fa-step-backward playControl playControlTransparent"
+                                    v-on:click="lastSong()"></i>
+                            </div>
+                            <div class="playControlWrapper" v-if="playing">
+                                <i class="fa fa-pause playControl" v-on:click="startOrPause()"></i>
+                            </div>
+                            <div class="playControlWrapper" v-else>
+                                <i class="fa fa-play playControl" v-on:click="startOrPause()"></i>
+                            </div>
+                            <div class="playControlWrapper noBackgroundWrapper">
+                                <i class="fa fa-step-forward playControl playControlTransparent"
+                                    v-on:click="nextSong()"></i>
+                            </div>
+
+                            <div style="display: flex;flex-direction: row;position: absolute;right: 15px;">
+
+                                <i class="fa fa-exchange" style="font-size: 25px;margin: 0px 5px;color: white;"
+                                    v-on:click="mode = 2" v-if="mode == 1"></i>
+                                <i class="fa fa-level-down" style="font-size: 25px;margin: 0px 5px;color: white;"
+                                    v-on:click="mode = 3" v-if="mode == 2"></i>
+                                <i class="fa fa-random" style="font-size: 25px;margin: 0px 5px;color: white;"
+                                    v-on:click="mode = 1" v-if="mode == 3"></i>
+
+                                <i class="fa fa-bars" style="font-size: 25px;margin: 0px 5px;color: white;"
+                                    v-on:click="toggleCard()"></i>
+                                <i class="fa fa-heart" style="font-size: 25px;margin: 0px 5px; color:white;"
+                                    :class="{'mactive': exists}" v-on:click="collect()"></i>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div>
+                        <audio autoplay="autoplay" crossOrigin="anonymous" controls="controls" id="player"
+                            style="display: none;" muted>
+                            <source id="source">
+                            </source>
+                        </audio>
+                    </div>
+                </div>
+            </div>
+
+            <canvas id="jump"
+            style="position:absolute; bottom: 0px; margin: 0px auto; width: 100%; height: 40%; max-height: 40%; z-index: -1;">
+            </canvas>
+        </div>
+    </div>
+
+    <script>
+
+        var lineNo = 0;
+
+        function searchCallback(rdata) {
+            $("#btns").show();
+            vue.musics = rdata;
+        };
+
+        function renderFrame() {
+            requestAnimationFrame(renderFrame);//方法renderFrame托管到定时器，无限循环调度，频率<16.6ms/次
+
+            context.fillStyle = "#000";//黑色背景
+            context.fillRect(0, 0, WIDTH, HEIGHT);//画布拓展全屏,动态调整
+
+            analyser.getByteFrequencyData(dataArray);//获取当前时刻的音频数据
+
+            //part6: 绘画声压条
+            var x = 0;
+            for (var i = 0; i < bufferLength; i++) {
+                var data = dataArray[i];//int,0~255
+
+                var percentV = data / 255;//纵向比例
+                var percentH = i / bufferLength;//横向比例
+
+                barHeight = HEIGHT * percentV;
+
+                //gbk,0~255
+                var r = 255 * percentV;//值越大越红
+                var g = 255 * percentH;//越靠右越绿
+                var b = 50;
+
+                context.fillStyle = "rgb(" + r + "," + g + "," + b + ")";
+                context.fillRect(x, HEIGHT - barHeight, barWidth, barHeight);
+
+                x += barWidth + 1;//间隔1px
+            }
+        }
+
+        window.searchCallback2 = function (rdata) {
+            if (rdata.length > 0) {
+                if (rdata[0].source == "netease") {
+                    rdata.forEach(function (item, index) {
+                        vue.neteaseMusics.push(item);
+                        vue.musics.push(item);
+                    })
+                }
+            }
+        };
+
+        window.searchCallback3 = function (rdata) {
+            if (rdata.length > 0) {
+                if (rdata[0].source == "netease") {
+                    rdata.forEach(function (item, index) {
+                        vue.neteaseMusics.splice(-1, 0, item);
+                        vue.musics.splice(-1, 0, item);
+                    })
+                }
+            }
+        };
+
+        function picCallback(rdata) {
+            if (rdata.url != "") {
+                vue.playingSongImage = rdata.url;
+                $("#playCard").css("background-blend-mode", "overlay");
+                $("#playCard").css("background", "rgba(255,255,255,.4) url(" + rdata.url + ') center');
+            } else {
+                vue.playingSongImage = "https://p1.music.126.net/6y-UleORITEDbvrOLV0Q8A==/5639395138885805.jpg";
+            }
+        };
+        function songCallback(rdata) {
+            if (rdata.url == "") {
+                if (vue.mode == 1) {
+                    $("#player")[0].currentTime = 0;
+                    vue.playing = false;
+                    alert("资源不存在, 请播放其他资源");
+                    return;
+                }
+                if (vue.playList.length > 0) {
+                    if (vue.mode == 2) {
+                        if (vue.currentIndex == vue.playList.length - 1) {
+                            $("#player")[0].currentTime = 0;
+                            return;
+                        }
+                        vue.currentIndex += 1;
+                        vue.listen(vue.playList[vue.currentIndex]);
+                    } else if (vue.mode == 3) {
+                        vue.listen(vue.playList[Math.floor((Math.random() * vue.playList.length))]);
+                    }
+                }
+                return;
+            }
+
+            vue.playingSongUrl = rdata.url;
+            $("#player").attr("crossOrigin", "anonymous");
+            $("#player").attr("src", rdata.url);
+            // $("#download").attr("download", $("#title").html());
+            // $("#download").attr("href", rdata.url + "?response-content-type=application/octet-stream");
+
+            vue.startOrPause();
+        };
+
+        function downloadMp3() {
+            let url = vue.playingSongUrl;
+            let name = vue.playingSongName;
+            // const link = document.createElement('a');
+            // link.setAttribute('download', name);
+            // link.setAttribute('href', url);
+            // Object.assign(link.style, {
+            //     position: 'absolute',
+            //     top: 0,
+            //     opacity: 0,
+            // });
+            // document.body.appendChild(link);
+            // link.click();
+            // link.remove();
+
+            const x = new window.XMLHttpRequest();
+            x.open('GET', url, true);
+            x.responseType = 'blob';
+            x.onload = () => {
+                const url = window.URL.createObjectURL(x.response);
+                const a = document.createElement('a');
+                a.href = url;
+                a.download = name;
+                a.click();
+            };
+            x.send();
+            return false;
+        };
+
+        function lrcCallback(rdata) {
+            vue.createLrcObj(rdata.lyric);
+        };
+
+        var linehight = function (lineno) {
+            var ul = $("#lyric");
+            var $ul = document.getElementById('lyric');
+
+            if (lineno > 0) {
+                $(ul.find("li").get(topNum + lineno - 1)).removeClass("lineheight");
+            }
+            var nowline = ul.find("li").get(topNum + lineno);
+            $(nowline).addClass("lineheight");
+
+            var _scrollTop;
+            $ul.scrollTop = 0;
+            if ($ul.clientHeight * fraction > nowline.offsetTop) {
+                _scrollTop = 0;
+            } else if (nowline.offsetTop > ($ul.scrollHeight - $ul.clientHeight * (1 - fraction))) {
+                _scrollTop = $ul.scrollHeight - $ul.clientHeight;
+            } else {
+                _scrollTop = nowline.offsetTop - $ul.clientHeight * fraction;
+            }
+
+
+            //以下声明歌词高亮行固定的基准线位置成为 “A”
+            if ((nowline.offsetTop - $ul.scrollTop) >= $ul.clientHeight * fraction) {
+                //如果高亮显示的歌词在A下面，那就将滚动条向下滚动，滚动距离为 当前高亮行距离顶部的距离-滚动条已经卷起的高度-A到可视窗口的距离
+                $ul.scrollTop += Math.ceil(nowline.offsetTop - $ul.scrollTop - $ul.clientHeight * fraction);
+
+            } else if ((nowline.offsetTop - $ul.scrollTop) < $ul.clientHeight * fraction && _scrollTop != 0) {
+                //如果高亮显示的歌词在A上面，那就将滚动条向上滚动，滚动距离为 A到可视窗口的距离-当前高亮行距离顶部的距离-滚动条已经卷起的高度
+                $ul.scrollTop -= Math.ceil($ul.clientHeight * fraction - (nowline.offsetTop - $ul.scrollTop));
+
+            } else if (_scrollTop == 0) {
+                $ul.scrollTop = 0;
+            } else {
+                $ul.scrollTop += $(ul.find('li').get(0)).height();
+            }
+
+        }
+
+        var vue = new Vue({
+            el: "#app",
+            data: {
+                page: 1,
+                neteaseMusics: [],
+                xiamiMusics: [],
+                baiduMusics: [],
+                kugouMusics: [],
+                tencentMusics: [],
+                musics: [],
+                exists: false,
+                current: null,
+                collects: [],
+                oLRC: {
+                    ti: "", //歌曲名
+                    ar: "", //演唱者
+                    al: "", //专辑名
+                    by: "", //歌词制作人
+                    offset: 0, //时间补偿值，单位毫秒，用于调整歌词整体位置
+                    ms: [] //歌词数组{t:时间,c:歌词}
+                },
+                playList: [],
+                currentIndex: 0,
+                mode: 2,
+                index: 0,
+                playing: false,
+                present: false,
+                playingSongImage: "https://p1.music.126.net/6y-UleORITEDbvrOLV0Q8A==/5639395138885805.jpg",
+                playingSongName: "歌曲名称",
+                playingSongSinger: "歌手",
+                playingSongUrl: "",
+
+                toastContent: '这是一个测试toast',
+                shareImage: undefined,
+            },
+            mounted() {
+                var colls = JSON.parse(localStorage.getItem('collects'));
+                if (colls != null && colls != undefined && colls.length > 0) {
+                    this.collects = colls.concat();
+                }
+
+                // // 创建 URLSearchParams 对象并传入当前页面的完整 URL
+                // const params = new URLSearchParams(window.location.search);
+                // // 通过 get() 方法获取指定参数名称的值
+                // const url = params.get('url');
+                // const name = params.get('name');
+                // const artist = params.get('artist');
+                // const source = params.get('source');
+                // const pic = params.get('pic');
+                // const lyric = params.get('lyric');
+
+                // let obj = {
+                //     url_id: url,
+                //     name: name,
+                //     artist: artist,
+                //     source: source,
+                //     pic_id: pic,
+                //     lyric_id: lyric
+                // }
+                // this.listen(obj);
+            },
+            methods: {
+                tooglePlayerBar: function () {
+                    this.present = !this.present;
+                },
+                showPlayer: function () {
+                    $("#searchArea").hide();
+                    $("#listArea").hide();
+                    $("#playerBar").hide();
+                    $("#playCard").show();
+                },
+                lastSong: function () {
+                    var mode = vue.mode;
+                    if (mode == 1) {
+                        $("#player")[0].currentTime = 0;
+                        return;
+                    }
+                    if (vue.playList.length > 0) {
+                        if (mode == 2) {
+                            if (vue.currentIndex == 0) {
+                                $("#player")[0].currentTime = 0;
+                                return;
+                            }
+                            vue.currentIndex -= 1;
+                            vue.listen(vue.playList[vue.currentIndex]);
+                        } else if (mode == 3) {
+                            vue.listen(vue.playList[Math.floor((Math.random() * vue.playList.length))]);
+                        }
+                    }
+                },
+                hideJump: function () {
+                    $("#lyric").hide();
+                    $("#jump").show();
+                },
+                hideLyric: function () {
+                    $("#lyric").show();
+                    $("#jump").hide();
+                },
+                showToast: function () {
+                    $("#toast").show();
+                    setTimeout(() => {
+                        this.toastContent = undefined;
+                        $("#toast").hide();
+                    }, 2000);
+                },
+                toggleJump: function () {
+                    if ($("#jump").is(":visible")) {
+                        $("#lyric").show();
+                        $("#jump").hide();
+                    } else {
+                        $("#lyric").hide();
+                        $("#jump").show();
+                    }
+                },
+                nextSong: function () {
+                    var mode = vue.mode;
+                    if (mode == 1) {
+                        $("#player")[0].currentTime = 0;
+                        return;
+                    }
+                    if (vue.playList.length > 0) {
+                        if (mode == 2) {
+                            if (vue.currentIndex == vue.playList.length - 1) {
+                                $("#player")[0].currentTime = 0;
+                                return;
+                            }
+                            vue.currentIndex += 1;
+                            vue.listen(vue.playList[vue.currentIndex]);
+                        } else if (mode == 3) {
+                            vue.listen(vue.playList[Math.floor((Math.random() * vue.playList.length))]);
+                        }
+                    }
+                },
+                playMode: function () {
+                    if ($("#playModeTag").hasClass("fa-exchange")) {
+                        $("#playModeTag").removeClass("fa-exchange");
+                        $("#playModeTag").addClass("fa-level-down");
+                        vue.mode = 2;
+
+                    } else if ($("#playModeTag").hasClass("fa-level-down")) {
+                        $("#playModeTag").removeClass("fa-level-down");
+                        $("#playModeTag").addClass("fa-random");
+                        vue.mode = 3;
+
+                    } else if ($("#playModeTag").hasClass("fa-random")) {
+                        $("#playModeTag").removeClass("fa-random");
+                        $("#playModeTag").addClass("fa-exchange");
+                        vue.mode = 1;
+                    }
+                },
+                collectListen: function (music) {
+                    this.playList = this.collects;
+                    this.currentIndex = this.collects.findIndex((a) => a.url_id === music.url_id);
+                    this.listen(music, null, function () { vue.closeCard(); });
+                },
+                searchListen: function (music) {
+                    this.playList = this.musics;
+                    this.currentIndex = this.musics.findIndex(a => music.url_id === a.url_id);
+                    this.listen(music, null, null);
+                },
+                closeCard: function () {
+                    $("#card").hide();
+                },
+                toggleCard: function () {
+                    $("#card").show();
+                },
+                next: function () {
+                    this.page++;
+                    var text = $("#searchInput").val();
+                    if (text == "") {
+                        alert("请输入歌曲名称!");
+                        return;
+                    }
+
+                    $.ajax({
+                        url: 'http://www.runker.vip/music/api.php',
+                        type: 'post',
+                        async: false,
+                        dataType: 'jsonp',  // 请求方式为jsonp
+                        jsonpCallback: "searchCallback2",    // 自定义回调函数名
+                        data: { types: 'search', count: 20, source: 'netease', pages: this.page, name: text }
+                    });
+                    vue.playList = vue.musics;
+
+                },
+                search: function () {
+                    this.page = 1;
+                    var text = $("#searchInput").val();
+                    if (text == "") {
+                        alert("请输入歌曲名称!");
+                        return;
+                    }
+                    this.musics = [];
+                    this.playList = [];
+
+                    $.ajax({
+                        url: 'http://www.runker.vip/music/api.php',
+                        async: false,
+                        type: 'post',
+                        cache: false,
+                        dataType: 'jsonp',  // 请求方式为jsonp
+                        jsonpCallback: "searchCallback3",    // 自定义回调函数名
+                        data: { types: 'search', count: 20, source: 'netease', pages: 1, name: text }
+                    });
+
+                    this.playList = this.musics;
+                },
+
+                getName: function (names) {
+                    var name = "";
+                    for (var i = 0; i < names.length; i++) {
+                        name += names[i];
+                        if (i != names.length - 1) {
+                            name += "&"
+                        }
+                    }
+                    return name;
+                },
+                getArtists: function (names) {
+                    return names.split("&");
+                },
+                getLength: function (duration) {
+                    var dur = duration / 1000;
+                    return parseInt(dur / 60) + ":" + parseInt(dur % 60);
+                },
+                collect: function () {
+                    var tempCurrent = this.current;
+                    if (tempCurrent == null) {
+                        return;
+                    }
+
+                    var cMusic = this.collects.find((a) => a.url_id == tempCurrent.url_id);
+                    if (cMusic == null) {
+                        this.collects.push(tempCurrent);
+                        vue.exists = true;
+                    } else {
+                        this.collects = this.collects.filter((a) => a.url_id != cMusic.url_id);
+                        vue.exists = false;
+                        this.current = null;
+                    }
+                    localStorage.setItem('collects', JSON.stringify(this.collects));
+
+                },
+                createLrcObj: function (lrc) {
+                    if (lrc.length == 0)
+                        return;
+
+                    this.oLRC.ti = ""; //歌曲名
+                    this.oLRC.ar = ""; //演唱者
+                    this.oLRC.al = ""; //专辑名
+                    this.oLRC.by = ""; //歌词制作人
+                    this.oLRC.offset = 0; //时间补偿值，单位毫秒，用于调整歌词整体位置
+                    this.oLRC.ms = []; //歌词数组{t:时间,c:歌词}
+                    var lrcs = lrc.split('\n');//用回车拆分成数组
+                    for (var i in lrcs) {//遍历歌词数组
+                        lrcs[i] = lrcs[i].replace(/(^\s*)|(\s*$)/g, ""); //去除前后空格
+                        var t = lrcs[i].substring(lrcs[i].indexOf("[") + 1, lrcs[i].indexOf("]"));//取[]间的内容
+                        var s = t.split(":");//分离:前后文字
+                        if (isNaN(parseInt(s[0]))) { //不是数值
+                            for (var i in this.oLRC) {
+                                if (i != "ms" && i == s[0].toLowerCase()) {
+                                    this.oLRC[i] = s[1];
+                                }
+                            }
+                        } else { //是数值
+                            var arr = lrcs[i].match(/\[(\d+:.+?)\]/g);//提取时间字段，可能有多个
+                            var start = 0;
+                            for (var k in arr) {
+                                start += arr[k].length; //计算歌词位置
+                            }
+                            var content = lrcs[i].substring(start);//获取歌词内容
+                            for (var k in arr) {
+                                var t = arr[k].substring(1, arr[k].length - 1);//取[]间的内容
+                                var s = t.split(":");//分离:前后文字
+                                this.oLRC.ms.push({//对象{t:时间,c:歌词}加入ms数组
+                                    t: (parseFloat(s[0]) * 60 + parseFloat(s[1])).toFixed(3),
+                                    c: content
+                                });
+                            }
+                        }
+                    }
+                    this.oLRC.ms.sort(function (a, b) {//按时间顺序排序
+                        return a.t - b.t;
+                    });
+                    this.index = 0;
+                },
+                showLRC: function (current) {
+                    if (this.oLRC.ms.length == 0) {
+                        return;
+                    }
+                    var s = "";
+                    var index = 0;
+                    for (var i = index; i < this.oLRC.ms.length; i++) {//遍历ms数组，把歌词加入列表
+                        if (this.oLRC.ms[i].t < current) {
+                            index++;
+                        } else {
+                            break;
+                        }
+                    }
+
+                    // index 是下一句
+                    if (index > 2) {
+                        for (var i = index - 3; i <= index - 2; i++) {
+                            s += '<li style="min-height:18px;">' + this.oLRC.ms[i].c + '</li>';
+                        }
+                        if (index == this.oLRC.ms.length) {
+                            s += '<li style="min-height:18px;"><label class="labeld" style="font-size: 20px;font-weight: bold;-webkit-background-clip: text;color: transparent;background-image: linear-gradient(to right, var(--global-back-color) ' + Number(100 * (current - this.oLRC.ms[index - 1].t) / ($("#player")[0].duration - this.oLRC.ms[index - 1].t)) + '%, #ffffff 0%);">' + this.oLRC.ms[index - 1].c + '</label></li>';
+                        } else {
+                            s += '<li style="min-height:18px;"><label class="labeld" style="font-size: 20px;font-weight: bold;-webkit-background-clip: text;color: transparent;background-image: linear-gradient(to right, var(--global-back-color) ' + Number(100 * (current - this.oLRC.ms[index - 1].t) / (this.oLRC.ms[index].t - this.oLRC.ms[index - 1].t)) + '%, #ffffff 0%);">' + this.oLRC.ms[index - 1].c + '</label></li>';
+                        }
+                        for (var i = index; i < Math.min(index + 2, this.oLRC.ms.length); i++) {
+                            s += '<li style="min-height:18px;">' + this.oLRC.ms[i].c + '</li>';
+                        }
+                    } else {
+                        for (var i = 0; i < index; i++) {
+                            if (i == index - 1) {
+                                s += '<li style="min-height:18px;"> <label class="labeld" style="font-size: 20px;font-weight: bold;-webkit-background-clip: text;color: transparent;background-image: linear-gradient(to right, var(--global-back-color) ' + Number(100 * (current - this.oLRC.ms[i].t) / (this.oLRC.ms[i + 1].t - this.oLRC.ms[i].t)) + '%, #ffffff 0%);">' + this.oLRC.ms[i].c + '</label></li>';
+                            } else {
+                                s += '<li style="min-height:18px;">' + this.oLRC.ms[i].c + '</li>';
+                            }
+                        }
+                        for (var i = index; i < 5; i++) {
+                            s += '<li style="min-height:18px;">' + this.oLRC.ms[i].c + '</li>';
+                        }
+                    }
+                    document.getElementById("lyric").innerHTML = s;
+                },
+                hidePlayCard: function () {
+                    $("#playCard").hide();
+                    $("#searchArea").show();
+                    $("#listArea").show();
+                    $("#playerBar").show();
+                },
+                share: function () {
+                    $("#shareModel").show();
+                    // $("label.labeld").addClass("linehight");
+                    // $("label.labeld").removeClass("labeld");
+                    // // var htmlDom = document.getElementById("playCardContent");
+                    // var htmlDom = document.body;
+                    // html2canvas(htmlDom,{useCORS:true,logging:true, scrollY: 0, scrollX: 0}).then(function(canvas) {
+                    //     var base64 = canvas.toDataURL("image/jpeg");
+                    //     console.log(base64 );//生成本地base64图片
+                    // });
+                    // $("label.linehight").addClass("labeld");
+                    // $("label.linehight").removeClass("linehight");
+                },
+                copyToClipboard: function (text) {
+                    // 检查浏览器是否支持 Clipboard API
+                    if (!navigator.clipboard) {
+                        // 如果不支持，则使用传统的 document.execCommand("copy") 方式
+                        const textArea = document.createElement("textarea");
+                        textArea.value = text;
+                        textArea.style.position = "fixed";
+                        document.body.appendChild(textArea);
+                        textArea.focus();
+                        textArea.select();
+                        document.execCommand("copy");
+                        document.body.removeChild(textArea);
+                        return;
+                    }
+                    // 使用 Clipboard API 复制内容到剪切板
+                    navigator.clipboard.writeText(text).then(
+                        function () {
+                            console.log("复制成功");
+                        },
+                        function () {
+                            console.log("复制失败");
+                        }
+                    );
+                },
+                encode: function (source) {
+                    return encodeURIComponent(source);
+                },
+                shareNow: function () {
+                    // const component = document.querySelector('#shareModel'); // 根据实际情况修改选择器
+                    // html2canvas(component).then((canvas) => {
+                    //     const dataUrl = canvas.toDataURL(); // 转换为 Data URL
+                    //     // navigator.clipboard.writeText(dataUrl); // 将 Data URL 复制到剪贴板
+                    //     var screenshotImg = new Image();
+                    //     // 设置截图为 Image 对象的源
+                    //     screenshotImg.src = canvas.toDataURL("image/png");
+                    //     this.shareImage = screenshotImg.src;
+                    //     $("#shareModel").hide();
+                    // });
+                    this.copyToClipboard('https://dayandnight2018.github.io/online-music?' + this.encode(`url=${this.current.url_id}&name=${this.current.name}&artist=${this.getName(this.current.artist)}&source=${this.current.source}&pic=${this.current.pic_id}&lyric=${this.current.lyric_id}`));
+                    this.toastContent = "已复制至剪贴板";
+                    this.showToast();
+                    $("#shareModel").hide();
+                    // $("#sharePreview").show();
+                },
+                jumpShow: function () {
+                    //part1: 画布
+                    var canvas = document.getElementById("jump");
+                    var context = canvas.getContext("2d");
+                    var WIDTH = canvas.width;
+                    var HEIGHT = canvas.height;
+
+                    var audio = $("#player")[0];
+                    // audio.load();
+
+                    //part3: 分析器
+                    var AudCtx = new AudioContext();//音频内容
+                    var src = AudCtx.createMediaElementSource(audio);
+                    var analyser = AudCtx.createAnalyser();
+
+                    src.connect(analyser);
+                    analyser.connect(AudCtx.destination);
+                    analyser.fftSize = 128;//快速傅里叶变换, 必须为2的N次方
+
+                    var bufferLength = analyser.frequencyBinCount;// = fftSize * 0.5
+
+                    //part4: 变量
+                    var barWidth = (WIDTH / bufferLength) - 1;//间隔1px
+                    var barHeight;
+
+                    var dataArray = new Uint8Array(bufferLength);//8位无符号定长数组
+
+                    function renderFrame() {
+                        requestAnimationFrame(renderFrame);//方法renderFrame托管到定时器，无限循环调度，频率<16.6ms/次
+
+                        // context.fillStyle = "#000";//黑色背景
+                        context.fillStyle = 'rgba(255, 255, 255, 0)';
+                        context.clearRect(0, 0, WIDTH, HEIGHT);
+                        context.fillRect(0, 0, WIDTH, HEIGHT);//画布拓展全屏,动态调整
+
+                        analyser.getByteFrequencyData(dataArray);//获取当前时刻的音频数据
+
+                        //part6: 绘画声压条
+                        var x = 0;
+                        for (var i = 0; i < bufferLength; i++) {
+                            var data = dataArray[i];//int,0~255
+
+                            var percentV = data / 255;//纵向比例
+                            var percentH = i / bufferLength;//横向比例
+
+                            barHeight = HEIGHT * percentV;
+
+                            //gbk,0~255
+                            var r = 255 * percentV;//值越大越红
+                            var g = 255 * percentH;//越靠右越绿
+                            var b = 50;
+
+                            context.fillStyle = "rgb(" + r + "," + g + "," + b + ")";
+                            context.fillRect(x, HEIGHT - barHeight, barWidth, barHeight);
+
+                            x += barWidth + 1;//间隔1px
+                        }
+                    }
+                    renderFrame();
+                },
+                startOrPause: function () {
+                    // 当前没有音乐
+                    if (this.current == null || this.current.url_id == "") {
+                        return;
+                    }
+
+                    // 播放中
+                    var player = $("#player")[0];
+                    if (!player.paused) {
+                        player.pause();
+                        this.playing = false;
+                    } else {
+                        // try {
+                        //     this.jumpShow();
+                        // } catch (e) {
+                        //     console.log(e);
+                        // }
+                        player.play();
+                        this.playing = true;
+                    }
+                },
+                listen: function (music, before, after) {
+                    if (before) {
+                        before();
+                    }
+
+                    if (this.current != null && this.current.url_id == music.url_id) {
+                        this.startOrPause();
+                        return;
+                    }
+
+                    $("#player")[0].pause();
+                    this.playing = false;
+                    this.playingSongName = music.name;
+                    this.playingSongSinger = this.getName(music.artist);
+
+                    var tempCurrent = this.current = music;
+                    var cMusic = this.collects.find((a) => a.url_id == tempCurrent.url_id && a.source == tempCurrent.source);
+
+                    if (cMusic == null) {
+                        this.exists = false;
+                    } else {
+                        this.exists = true;
+                    }
+
+                    $.ajax({
+                        url: 'http://www.runker.vip/music/api.php',
+                        type: 'post',
+                        dataType: 'jsonp',  // 请求方式为jsonp
+                        jsonpCallback: "picCallback",    // 自定义回调函数名
+                        data: { types: 'pic', id: music.pic_id, source: music.source }
+                    });
+
+                    $.ajax({
+                        url: 'http://www.runker.vip/music/api.php',
+                        type: 'post',
+                        dataType: 'jsonp',  // 请求方式为jsonp
+                        async: false,
+                        jsonpCallback: "songCallback",    // 自定义回调函数名
+                        data: { types: 'url', id: music.url_id, source: music.source }
+                    });
+
+                    $.ajax({
+                        url: 'http://www.runker.vip/music/api.php',
+                        type: 'post',
+                        dataType: 'jsonp',  // 请求方式为jsonp
+                        async: false,
+                        jsonpCallback: "lrcCallback",    // 自定义回调函数名
+                        data: { types: 'lyric', id: music.lyric_id, source: music.source }
+                    });
+
+                    if (after) {
+                        after();
+                    }
+                }
+            }
+        });
+
+        function format(time) {
+            var time = parseInt(time);
+            var m = parseInt(time / 60);
+            var s = parseInt(time % 60);
+            m = zero(m);
+            s = zero(s);
+            function zero(num) {
+                if (num < 10) {
+                    num = "0" + num;
+                }
+                return num;
+            }
+            return m + ":" + s;
+        }
+
+        function decode(source) {
+            return decodeURIComponent(source);
+        }
+
+        $("#searchInput").val("最新");
+        $.ajax({
+            url: 'http://www.runker.vip/music/api.php',
+            async: false,
+            type: 'post',
+            cache: false,
+            dataType: 'jsonp',  // 请求方式为jsonp
+            jsonpCallback: "searchCallback2",    // 自定义回调函数名
+            data: { types: 'search', count: 20, source: 'netease', pages: 1, name: "最新" }
+        });
+
+        // 创建 URLSearchParams 对象并传入当前页面的完整 URL
+        const params = new URLSearchParams(decode(window.location.search));
+        console.log(decode(window.location.search));
+        // 通过 get() 方法获取指定参数名称的值
+        const url = params.get('url');
+        const name = params.get('name');
+        const artist = params.get('artist');
+        const source = params.get('source');
+        const pic = params.get('pic');
+        const lyric = params.get('lyric');
+
+        if (url && name && artist && source && pic) {
+            let obj = {
+                url_id: url,
+                name: name,
+                artist: vue.getArtists(artist),
+                source: source,
+                pic_id: pic,
+                lyric_id: lyric
+            }
+
+            vue.showPlayer();
+            vue.listen(obj);
+            vue.startOrPause();
+        }
+
+        // 更新时间
+        $("#player")[0].addEventListener("timeupdate", function () {
+            var audio = $("#player")[0];
+            var n = audio.currentTime / audio.duration * 100;
+            if (!isNaN(Math.round(n)))
+                $("#playProgress").val(Math.round(n));
+            $("#str").html(format(audio.currentTime));
+            $("#end").html(format(audio.duration));
+            vue.showLRC(audio.currentTime);
+        })
+
+        // 结束播放
+        document.getElementById("player").onended = function () {
+            if (vue.playList.length > 0) {
+                var mode = vue.mode;
+                if (mode == 1) {
+                    vue.listen(vue.current);
+                } else if (mode == 2) {
+                    if (vue.currentIndex == vue.playList.length - 1) {
+                        vue.playing = false;
+                        return;
+                    }
+                    vue.currentIndex += 1;
+                    vue.listen(vue.playList[vue.currentIndex]);
+                } else if (mode == 3) {
+                    vue.listen(vue.playList[Math.floor((Math.random() * vue.playList.length))]);
+                }
+                return;
+            }
+            vue.playing = false;
+        };
+
+        document.getElementById("player").onpause = function () {
+            vue.playing = false;
+        };
+
+        //点击进度条位置
+        $("#playProgress").click(function (ev) {
+            var ev = ev || window.event;
+            var audio = $("#player")[0];
+            var x = ev.pageX - this.offsetLeft;
+            audio.currentTime = x / this.offsetWidth * audio.duration;
+        });
+
+        /*$("body").on("touchstart", function(e) {
+        e.preventDefault();
+        startX = e.originalEvent.changedTouches[0].pageX,
+        startY = e.originalEvent.changedTouches[0].pageY;
+      });
+
+      $("body").on("touchmove", function(e) {
+        e.preventDefault();
+        moveEndX = e.originalEvent.changedTouches[0].pageX,
+        moveEndY = e.originalEvent.changedTouches[0].pageY,
+
+        X = moveEndX - startX,
+        Y = moveEndY - startY;
+        if ( Math.abs(X) > Math.abs(Y) && X > 0 ) {
+              $("#playCard").slideLeftHide();
+              $("#searchArea").slideLeftShow();
+              $("#listArea").slideLeftShow();
+              $("#playerBar").slideLeftShow();
+        }
+        else if ( Math.abs(X) > Math.abs(Y) && X < 0 ) {
+              $("#searchArea").slideLeftHide();
+              $("#listArea").slideLeftHide();
+              $("#playerBar").slideLeftHide();
+              $("#playCard").slideLeftShow();
+        }
+      });*/
+
+        jQuery.fn.slideLeftHide = function (speed, callback) {
+            this.animate({
+                width: "hide",
+                paddingLeft: "hide",
+                paddingRight: "hide",
+                marginLeft: "hide",
+                marginRight: "hide"
+            }, speed, callback);
+        };
+        jQuery.fn.slideLeftShow = function (speed, callback) {
+            this.animate({
+                width: "show",
+                paddingLeft: "show",
+                paddingRight: "show",
+                marginLeft: "show",
+                marginRight: "show"
+            }, speed, callback);
+        };
+
+    </script>
+</body>
+
 </html>
