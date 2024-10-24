@@ -153,7 +153,7 @@
 
         #lyric {
             text-decoration: none;
-            font-size: 1rem;
+            font-size: 2rem;
             font-family: 楷体;
             overflow-y: hidden;
         }
@@ -941,9 +941,9 @@
                             s += '<li style="min-height:18px;">' + this.oLRC.ms[i].c + '</li>';
                         }
                         if (index == this.oLRC.ms.length) {
-                            s += '<li style="min-height:18px;"><label class="labeld" style="font-size: 20px;font-weight: bold;-webkit-background-clip: text;color: transparent;background-image: linear-gradient(to right, var(--global-back-color) ' + Number(100 * (current - this.oLRC.ms[index - 1].t) / ($("#player")[0].duration - this.oLRC.ms[index - 1].t)) + '%, #ffffff 0%);">' + this.oLRC.ms[index - 1].c + '</label></li>';
+                            s += '<li style="min-height:18px;"><label class="labeld" style="font-size: 2rem;font-weight: bold;-webkit-background-clip: text;color: transparent;background-image: linear-gradient(to right, var(--global-back-color) ' + Number(100 * (current - this.oLRC.ms[index - 1].t) / ($("#player")[0].duration - this.oLRC.ms[index - 1].t)) + '%, #ffffff 0%);">' + this.oLRC.ms[index - 1].c + '</label></li>';
                         } else {
-                            s += '<li style="min-height:18px;"><label class="labeld" style="font-size: 20px;font-weight: bold;-webkit-background-clip: text;color: transparent;background-image: linear-gradient(to right, var(--global-back-color) ' + Number(100 * (current - this.oLRC.ms[index - 1].t) / (this.oLRC.ms[index].t - this.oLRC.ms[index - 1].t)) + '%, #ffffff 0%);">' + this.oLRC.ms[index - 1].c + '</label></li>';
+                            s += '<li style="min-height:18px;"><label class="labeld" style="font-size: 2rem;font-weight: bold;-webkit-background-clip: text;color: transparent;background-image: linear-gradient(to right, var(--global-back-color) ' + Number(100 * (current - this.oLRC.ms[index - 1].t) / (this.oLRC.ms[index].t - this.oLRC.ms[index - 1].t)) + '%, #ffffff 0%);">' + this.oLRC.ms[index - 1].c + '</label></li>';
                         }
                         for (var i = index; i < Math.min(index + 2, this.oLRC.ms.length); i++) {
                             s += '<li style="min-height:18px;">' + this.oLRC.ms[i].c + '</li>';
@@ -951,7 +951,7 @@
                     } else {
                         for (var i = 0; i < index; i++) {
                             if (i == index - 1) {
-                                s += '<li style="min-height:18px;"> <label class="labeld" style="font-size: 20px;font-weight: bold;-webkit-background-clip: text;color: transparent;background-image: linear-gradient(to right, var(--global-back-color) ' + Number(100 * (current - this.oLRC.ms[i].t) / (this.oLRC.ms[i + 1].t - this.oLRC.ms[i].t)) + '%, #ffffff 0%);">' + this.oLRC.ms[i].c + '</label></li>';
+                                s += '<li style="min-height:18px;"> <label class="labeld" style="font-size: 2rem;font-weight: bold;-webkit-background-clip: text;color: transparent;background-image: linear-gradient(to right, var(--global-back-color) ' + Number(100 * (current - this.oLRC.ms[i].t) / (this.oLRC.ms[i + 1].t - this.oLRC.ms[i].t)) + '%, #ffffff 0%);">' + this.oLRC.ms[i].c + '</label></li>';
                             } else {
                                 s += '<li style="min-height:18px;">' + this.oLRC.ms[i].c + '</li>';
                             }
