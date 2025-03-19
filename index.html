@@ -699,6 +699,8 @@
 
         }
 
+        var baseUrl = "https://music.mcya.cn/api.php"
+
         var vue = new Vue({
             el: "#app",
             data: {
@@ -874,7 +876,7 @@
                     }
 
                     $.ajax({
-                        url: 'http://www.runker.vip/music/api.php',
+                        url: baseUrl,
                         type: 'post',
                         async:false,
                         dataType: 'jsonp',  // 请求方式为jsonp
@@ -895,7 +897,7 @@
                     this.playList = [];
 
                     $.ajax({
-                        url: 'http://www.runker.vip/music/api.php',
+                        url: baseUrl,
                         async:false,
                         type: 'post',
                         cache:false,
@@ -1195,7 +1197,7 @@
                     }
 
                     $.ajax({
-                        url: 'http://www.runker.vip/music/api.php',
+                        url: baseUrl,
                         type: 'post',
                         dataType: 'jsonp',  // 请求方式为jsonp
                         jsonpCallback: "picCallback",    // 自定义回调函数名
@@ -1203,7 +1205,7 @@
                     });
 
                     $.ajax({
-                        url: 'http://www.runker.vip/music/api.php',
+                        url: baseUrl,
                         type: 'post',
                         dataType: 'jsonp',  // 请求方式为jsonp
                         async: false,
@@ -1212,7 +1214,7 @@
                     });
 
                     $.ajax({
-                        url: 'http://www.runker.vip/music/api.php',
+                        url: baseUrl,
                         type: 'post',
                         dataType: 'jsonp',  // 请求方式为jsonp
                         async: false,
@@ -1248,7 +1250,7 @@
 
         $("#searchInput").val("最新");
         $.ajax({
-            url: 'http://www.runker.vip/music/api.php',
+            url: baseUrl,
             async:false,
             type: 'post',
             cache:false,
