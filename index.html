@@ -19,8 +19,15 @@
     <style>
         :root{
             --global-fore-color: white;
-            /*--global-back-color: #ffd633;*/
-            --global-back-color: #00cc66;
+            --global-back-color: #667eea;
+            --global-back-gradient: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            --global-secondary-gradient: linear-gradient(135deg, #f093fb 0%, #f5576c 100%);
+            --glass-bg: rgba(255, 255, 255, 0.12);
+            --glass-border: rgba(255, 255, 255, 0.25);
+            --shadow-soft: 0 8px 32px 0 rgba(31, 38, 135, 0.37);
+            --shadow-glow: 0 0 25px rgba(102, 126, 234, 0.6);
+            --shadow-card: 0 4px 20px rgba(0, 0, 0, 0.15);
+            --shadow-hover: 0 8px 30px rgba(0, 0, 0, 0.25);
         }
         /* 图片旋转 */
         #image {
@@ -38,6 +45,45 @@
             100% {
                 transform: rotate(360deg);
             }
+        }
+
+        @keyframes fadeIn {
+            from {
+                opacity: 0;
+                transform: translateY(20px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        @keyframes pulse {
+            0%, 100% {
+                box-shadow: 0 0 20px rgba(102, 126, 234, 0.5);
+            }
+            50% {
+                box-shadow: 0 0 40px rgba(102, 126, 234, 0.8);
+            }
+        }
+
+        @keyframes slideIn {
+            from {
+                opacity: 0;
+                transform: translateX(-20px);
+            }
+            to {
+                opacity: 1;
+                transform: translateX(0);
+            }
+        }
+
+        .fade-in {
+            animation: fadeIn 0.5s ease-out;
+        }
+
+        .slide-in {
+            animation: slideIn 0.4s ease-out;
         }
 
         /* 旋转 */
@@ -91,31 +137,86 @@
         }
 
         .table td,.table th {
-            font-size: 0.75rem !important;
+            font-size: 0.8rem !important;
+            transition: all 0.3s ease;
+            padding: 12px 8px;
+        }
+
+        .table thead th {
+            font-weight: 600;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            padding: 15px 8px;
+        }
+
+        .table tbody tr {
+            opacity: 0;
+            animation: slideIn 0.4s ease-out forwards;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.08);
+        }
+
+        .table tbody tr:nth-child(1) { animation-delay: 0.05s; }
+        .table tbody tr:nth-child(2) { animation-delay: 0.1s; }
+        .table tbody tr:nth-child(3) { animation-delay: 0.15s; }
+        .table tbody tr:nth-child(4) { animation-delay: 0.2s; }
+        .table tbody tr:nth-child(5) { animation-delay: 0.25s; }
+        .table tbody tr:nth-child(6) { animation-delay: 0.3s; }
+        .table tbody tr:nth-child(7) { animation-delay: 0.35s; }
+        .table tbody tr:nth-child(8) { animation-delay: 0.4s; }
+        .table tbody tr:nth-child(9) { animation-delay: 0.45s; }
+        .table tbody tr:nth-child(10) { animation-delay: 0.5s; }
+
+        .table.is-hoverable tbody tr:not(.is-selected):hover {
+            background-color: rgba(255, 255, 255, 0.18);
+            cursor: pointer;
+            transform: scale(1.01);
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
         }
 
         #app {
             min-width: 100%;
             min-height: 100%;
-            // background-color: #555544;
-            background-color: var(--global-back-color);
+            background: var(--global-back-gradient);
+            background-attachment: fixed;
+            position: relative;
+        }
+
+        #app::before {
+            content: '';
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: radial-gradient(circle at 20% 80%, rgba(118, 75, 162, 0.3) 0%, transparent 50%),
+                        radial-gradient(circle at 80% 20%, rgba(102, 126, 234, 0.3) 0%, transparent 50%);
+            pointer-events: none;
+            z-index: 0;
         }
 
         #playerBar {
             position: fixed;
-            right: 10px;
-            bottom: 30px;
+            right: 12px;
+            bottom: 35px;
             z-index: 997;
-
-            box-shadow: 1px 1px 2px 2px silver;
-            border-radius: 5px 20px 20px 20px;
-            padding: 5px;
-            max-width: 150px;
-
+            box-shadow: var(--shadow-card);
+            border-radius: 24px;
+            padding: 12px;
+            max-width: 160px;
+            backdrop-filter: blur(15px);
+            -webkit-backdrop-filter: blur(15px);
+            background: var(--glass-bg);
+            border: 1px solid var(--glass-border);
             display: flex;
             flex-direction: column;
             align-items: center;
-            background: var(--global-fore-color);
+            transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+        }
+
+        #playerBar:hover {
+            transform: translateY(-8px);
+            box-shadow: var(--shadow-glow);
+            border-color: rgba(255, 255, 255, 0.35);
         }
 
         .playerBarItem {
@@ -145,42 +246,67 @@
             text-align: center;
             overflow-y: hidden;
             margin-top: 50px;
+            padding: 0 20px;
+            position: relative;
         }
 
         #lyric{
             text-decoration: none;
-            font-size: 12px;
-            font-family:楷体;
+            font-size: 13px;
+            font-family: 'PingFang SC', 'Microsoft YaHei', 'SimHei', sans-serif;
             overflow-y: hidden;
+            line-height: 1.8;
+        }
+
+        #lyric li {
+            padding: 10px 0;
+            opacity: 0.5;
+            transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+            font-weight: 400;
+        }
+
+        #lyric li.active {
+            opacity: 1;
+            transform: scale(1.08);
+            text-shadow: 0 0 15px rgba(102, 126, 234, 0.9);
+            font-weight: 600;
         }
 
         .playCardPart{
             width: 100%;
-            padding: 5px;
+            padding: 20px 10px;
             display: flex;
             flex-direction: column;
             align-items: center;
-            // background: white;
             position: fixed;
             bottom: 0px;
             left: 0px;
-            // box-shadow: 3px 3px 5px 5px silver;
+            background: linear-gradient(to top, rgba(0, 0, 0, 0.9) 0%, transparent 100%);
         }
 
         #str{
             float: left;
-            margin-left: 5px;
-            font-size: .25rem;
+            margin-left: 8px;
+            font-size: 14px;
+            font-weight: 500;
+        }
+
+        #end {
+            float: right;
+            margin-right: 8px;
+            font-size: 14px;
+            font-weight: 500;
         }
 
         #listArea{
-            padding: 10px;
+            padding: 15px 10px;
             width:100%;
             display:flex;
             flex-direction:column;
             align-items:center;
-            margin-bottom:120px;
+            margin-bottom:140px;
             z-index: 777;
+            position: relative;
         }
 
         #playCard{
@@ -190,6 +316,16 @@
             width: 100%;
             position: relative; 
             display: none;
+            animation: fadeIn 0.5s ease-out;
+        }
+
+        #playCardContent {
+            background: rgba(0, 0, 0, 0.85);
+            z-index: 999;
+            height: 100%;
+            width: 100%;
+            backdrop-filter: blur(20px);
+            -webkit-backdrop-filter: blur(20px);
         }
 
         #searchArea{
@@ -197,12 +333,16 @@
             top:0px;
             display:flex;
             flex-direction: row;
-            justify-content: space-around;
+            justify-content: center;
             width: 100%;
-            background: #fff;
-            padding: 10px;
+            background: var(--glass-bg);
+            backdrop-filter: blur(15px);
+            -webkit-backdrop-filter: blur(15px);
+            padding: 18px 12px;
             border-top:0px;
-            z-index: 777;
+            z-index: 888;
+            border-bottom: 1px solid var(--glass-border);
+            box-shadow: 0 2px 20px rgba(0, 0, 0, 0.1);
         }
         .playControl{
             font-size: 25px;
@@ -216,48 +356,124 @@
             color: white !important;
         }
         .playControlWrapper{
-            margin: 0px 8px;
+            margin: 0px 10px;
             display: flex;
             flex-direction: row;
             justify-content: center;
             align-items: center;
-            padding: 10px;
-            background: var(--global-back-color);
-            width: 40px;
-            height: 40px;
-            border-radius: 50%;            
+            padding: 12px;
+            background: var(--global-back-gradient);
+            width: 44px;
+            height: 44px;
+            border-radius: 50%;
+            box-shadow: var(--shadow-card);
+            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+            cursor: pointer;
         }
+
+        .playControlWrapper:hover {
+            transform: scale(1.12);
+            box-shadow: var(--shadow-glow);
+        }
+
+        .playControlWrapper:active {
+            transform: scale(0.92);
+        }
+        .input.is-rounded {
+            background: rgba(255, 255, 255, 0.18);
+            border: 1px solid var(--glass-border);
+            color: white;
+            backdrop-filter: blur(10px);
+            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+            box-shadow: inset 0 2px 4px rgba(0, 0, 0, 0.1);
+        }
+
+        .input.is-rounded::placeholder {
+            color: rgba(255, 255, 255, 0.65);
+            font-weight: 400;
+        }
+
+        .input.is-rounded:focus {
+            background: rgba(255, 255, 255, 0.28);
+            border-color: var(--global-back-color);
+            box-shadow: 0 0 20px rgba(102, 126, 234, 0.5), inset 0 2px 4px rgba(0, 0, 0, 0.1);
+            outline: none;
+        }
+
+        .button {
+            background: var(--global-back-gradient);
+            border: none;
+            color: white;
+            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+            box-shadow: var(--shadow-card);
+            padding: 10px 24px;
+            font-weight: 500;
+            letter-spacing: 0.5px;
+        }
+
+        .button:hover {
+            transform: translateY(-3px);
+            box-shadow: var(--shadow-glow);
+        }
+
+        .button:active {
+            transform: translateY(-1px);
+        }
+
         .noBackgroundWrapper{
             background: transparent !important;
             border: none !important;
             color: white !important;
         }
 
+        .noBackgroundWrapper:hover {
+            transform: scale(1.2);
+            color: var(--global-back-color) !important;
+        }
+
         progress::-webkit-progress-value{
+            background-color: var(--global-back-color) !important;
+            border-radius: 10px;
+        }
 
-            background-color:var(--global-back-color) !important;
+        progress::-webkit-progress-bar {
+            background-color: rgba(255, 255, 255, 0.2) !important;
+            border-radius: 10px;
+        }
 
+        progress::-moz-progress-bar {
+            background-color: var(--global-back-color) !important;
+            border-radius: 10px;
         }
 
         #playingBarTitle{
-            font-size: 12px;
+            font-size: 13px;
             text-align: center;
             text-overflow: ellipsis;
             white-space: nowrap;
             overflow: hidden; 
-            margin: 0px 5px;
+            margin: 8px 5px;
+            font-weight: 500;
+            line-height: 1.4;
         }
 
         #playingBatImage{
-            width: 40px; 
-            height: 40px; 
+            width: 44px; 
+            height: 44px; 
             border-radius: 50%;
+            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.2);
+            transition: all 0.3s ease;
+        }
+
+        #playingBatImage:hover {
+            transform: scale(1.05);
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.3);
         }
 
         #shareModel{
             background: white;
-            width: 80%;
-            border-radius: 5px;
+            width: 85%;
+            border-radius: 16px;
             margin: 0px auto;
             position: fixed;
             top: 50%;
@@ -265,6 +481,8 @@
             transform: translate(-50%, -50%);
             display: none;
             z-index: 999;
+            box-shadow: 0 10px 40px rgba(0, 0, 0, 0.3);
+            animation: fadeIn 0.3s ease-out;
         }
         .left-right{
             display: flex;
@@ -279,41 +497,56 @@
         }
 
         .shareTitle{
-            background: whitesmoke;
-            color: black;
-            padding: 0.5rem;
+            background: linear-gradient(135deg, #f5f7fa 0%, #e4e8ec 100%);
+            color: #2c3e50;
+            padding: 16px;
+            font-weight: 600;
+            font-size: 16px;
+            border-radius: 16px 16px 0 0;
         }
 
         .shareBtn{
-            background: var(--global-back-color);
+            background: var(--global-back-gradient);
             color: var(--global-fore-color);
-            font-size: 0.8rem;
-            border-radius: 25%;
+            font-size: 14px;
+            border-radius: 8px;
             border: none;
-            padding: 0.25rem;
-            margin: 0.5rem;
+            padding: 8px 20px;
+            margin: 16px;
             position: absolute;
             right: 0px;
             bottom: 0px;
+            font-weight: 500;
+            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+            box-shadow: 0 4px 15px rgba(102, 126, 234, 0.4);
+        }
+
+        .shareBtn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 6px 20px rgba(102, 126, 234, 0.5);
         }
 
         #toast{
-            background: gray;
+            background: rgba(0, 0, 0, 0.85);
             color: white;
-            font-size: 0.5rem;
-            padding: 0.1rem;
-            border-radius: 5px;
+            font-size: 14px;
+            padding: 12px 24px;
+            border-radius: 8px;
             position: fixed;
             left: 50%;
-            bottom: 10px;
+            bottom: 30px;
             transform: translateX(-50%);
             display: none;
             z-index: 9999;
+            backdrop-filter: blur(10px);
+            -webkit-backdrop-filter: blur(10px);
+            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.3);
+            font-weight: 500;
         }
 
         #sharePreview{
-            width: 80%;
-            border-radius: 5px;
+            width: 85%;
+            border-radius: 16px;
             margin: 0px auto;
             position: fixed;
             top: 50%;
@@ -321,6 +554,14 @@
             transform: translate(-50%, -50%);
             display: none;
             z-index: 99999;
+            box-shadow: 0 10px 40px rgba(0, 0, 0, 0.3);
+            overflow: hidden;
+        }
+
+        #sharePreview img {
+            width: 100%;
+            height: auto;
+            border-radius: 16px;
         }
     </style>
 </head>
@@ -358,18 +599,18 @@
         </div>
 
         <!-- 这里是显示收藏夹 -->
-        <div style="z-index:999;width: 80%;background: white;border: 1px solid silver; border-radius: 0px 0px 8px 8px;box-shadow: 3px 5px 5px silver;display: none; min-height: 120px; max-height: 80%;overflow-y: scroll;"
+        <div style="z-index:999;width: 85%;background: rgba(255, 255, 255, 0.95);border: 1px solid rgba(255, 255, 255, 0.3); border-radius: 16px;box-shadow: 0 10px 40px rgba(0, 0, 0, 0.2);display: none; min-height: 150px; max-height: 80%;overflow-y: scroll;backdrop-filter: blur(20px);-webkit-backdrop-filter: blur(20px);"
             class="ccard" id="card">
             <div
-                style="min-height: 30px;padding:5px;width:100%;background:var(--global-back-color);display: flex;flex-direction: row;justify-content: space-between;position: sticky;top: 0px;">
-                <div style="font-size: 14px;margin:5px;color:white">
-                    Collects
+                style="min-height: 45px;padding:12px 16px;width:100%;background:var(--global-back-gradient);display: flex;flex-direction: row;justify-content: space-between;position: sticky;top: 0px;border-radius: 16px 16px 0 0;">
+                <div style="font-size: 15px;margin:5px;color:white;font-weight: 600;">
+                    我的收藏
                 </div>
                 <div style="display: flex;justify-content: center;align-items: center;">
-                    <i class="fa fa-window-close" style="font-size:20px;color:white;" @click="closeCard()"></i>
+                    <i class="fa fa-window-close" style="font-size:22px;color:white;cursor: pointer;transition: all 0.3s ease;" @click="closeCard()"></i>
                 </div>
             </div>
-            <div v-if="collects.length == 0" style="text-align: center;margin: 20px;font-size:6px;">空空如也~~</div>
+            <div v-if="collects.length == 0" style="text-align: center;margin: 30px;font-size:14px;color: #999;">暂无收藏歌曲~~</div>
             <table class="table is-scripted is-hoverable is-fullwidth" style="width: 90%;margin: 0px auto;">
                 <thead style="width: 100%;font-size: 8px;" v-if="collects.length>0">
                     <th>title</th>
@@ -415,27 +656,28 @@
 
         <!-- 播放器 -->
         <div id="playCard">
-            <div style="background: rgba(0,0,0,0.7);z-index: 999;height: 100%;width: 100%;filter: drop-shadow(2px 4px 6px Silver);" id="playCardContent">
+            <div id="playCardContent">
                 <div style="width: 100%;">
                     <div>
                         <i class="fa fa-chevron-left"
-                        style="font-size: 30px;color: white;margin-left: 10px;margin-top: 20px;"
+                        style="font-size: 32px;color: white;margin-left: 12px;margin-top: 20px;cursor: pointer;transition: all 0.3s ease;"
                         v-on:click="hidePlayCard()"></i>
                         <i class="fa fa-share-alt"
-                        style="font-size: 30px;color: white;margin-right: 10px;margin-top: 20px;float:right"
+                        style="font-size: 32px;color: white;margin-right: 12px;margin-top: 20px;float:right;cursor: pointer;transition: all 0.3s ease;"
                         v-on:click="share()"></i>
                     </div>
-                    <div style="color: white;font-size: 20px;padding:5px 50px;text-align: center;width: 100%;text-overflow: ellipsis;white-space: nowrap;overflow: hidden;">
+                    <div style="color: white;font-size: 22px;padding:8px 50px;text-align: center;width: 100%;text-overflow: ellipsis;white-space: nowrap;overflow: hidden;font-weight: 600;">
                         {{playingSongName}}</div>
-                    <div style="color: white;font-size: 12px;padding:5px;text-align: center;width: 100%;">
+                    <div style="color: white;font-size: 14px;padding:5px;text-align: center;width: 100%;opacity: 0.9;">
                         {{playingSongSinger}}
                     </div>
                 </div>
 
-                <div style="text-align: center;width: 100%;margin-top: 20px;">
+                <div style="text-align: center;width: 100%;margin-top: 30px;">
                     <a id='download' style="display:block;margin:10px" onclick="javascript: downloadMp3()"><img id="image"
                             :src="playingSongImage"
-                            style="width: 200px; height: 200px;box-shadow: 1px 1px 2px 2px white;border-radius:50%" /></a>
+                            :class="{'rotate': playing}"
+                            style="width: 220px; height: 220px;box-shadow: 0 0 30px rgba(102, 126, 234, 0.6);border-radius:50%;border: 5px solid rgba(255,255,255,0.35);transition: all 0.4s ease;" /></a>
                 </div>
 
                 <!-- 歌词部分 -->
@@ -448,13 +690,13 @@
                 </canvas>
 
                 <div class="playCardPart">
-                    <div style="width: 100%;padding: 2px 5px 2px 5px;margin: 0px auto;">
-                        <P id="str" style="color:white;font-size: 1rem;">00:00</P>
-                        <P id="end" style="float: right;margin-right: 5px;font-size: 1rem; color:white">00:00</P>
+                    <div style="width: 100%;padding: 5px 10px;margin: 0px auto;">
+                        <P id="str" style="color:white;">00:00</P>
+                        <P id="end" style="float: right;margin-right: 8px; color:white">00:00</P>
                         <progress class="progress is-small" value="0" max="100" id="playProgress"
-                            style="height: 5px;width: 98%;margin: 0 auto; color: var(--global-back-color); !important; background-color: transparent !important;">|</progress>
+                            style="height: 6px;width: 96%;margin: 8px auto 0; border-radius: 10px;">|</progress>
                     </div>
-                    <div style="padding: 5px;display: flex;flex-direction: row;align-items: center;width: 100%;">
+                    <div style="padding: 10px;display: flex;flex-direction: row;align-items: center;width: 100%;">
                         <div class="playControlWrapper noBackgroundWrapper">
                             <i class="fa fa-step-backward playControl playControlTransparent" v-on:click="lastSong()"></i>
                         </div>
@@ -470,16 +712,16 @@
                         
                         <div style="display: flex;flex-direction: row;position: absolute;right: 15px;">
                         
-                            <i class="fa fa-exchange" style="font-size: 25px;margin: 0px 5px;color: white;"
+                            <i class="fa fa-exchange" style="font-size: 26px;margin: 0px 6px;color: white;cursor: pointer;transition: all 0.3s ease;"
                                 v-on:click="mode = 2" v-if="mode == 1"></i>
-                            <i class="fa fa-level-down" style="font-size: 25px;margin: 0px 5px;color: white;"
+                            <i class="fa fa-level-down" style="font-size: 26px;margin: 0px 6px;color: white;cursor: pointer;transition: all 0.3s ease;"
                                 v-on:click="mode = 3" v-if="mode == 2"></i>
-                            <i class="fa fa-random" style="font-size: 25px;margin: 0px 5px;color: white;"
+                            <i class="fa fa-random" style="font-size: 26px;margin: 0px 6px;color: white;cursor: pointer;transition: all 0.3s ease;"
                                 v-on:click="mode = 1" v-if="mode == 3"></i>
 
-                            <i class="fa fa-bars" style="font-size: 25px;margin: 0px 5px;color: white;"
+                            <i class="fa fa-bars" style="font-size: 26px;margin: 0px 6px;color: white;cursor: pointer;transition: all 0.3s ease;"
                                 v-on:click="toggleCard()"></i>
-                            <i class="fa fa-heart" style="font-size: 25px;margin: 0px 5px; color:white;" :class="{'mactive': exists}"
+                            <i class="fa fa-heart" style="font-size: 26px;margin: 0px 6px; color:white;cursor: pointer;transition: all 0.3s ease;" :class="{'mactive': exists}"
                                 v-on:click="collect()"></i>
                         </div>
                     </div>
@@ -699,7 +941,7 @@
 
         }
 
-        var baseUrl = "https://163api.qijieya.cn"
+        var baseUrl = "https://music.cpp-prog.com/api.php"
 
         var vue = new Vue({
             el: "#app",
