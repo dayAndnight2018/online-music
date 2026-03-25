@@ -1348,6 +1348,7 @@
                      var src = AudCtx.createMediaElementSource(audio);
                      var analyser = AudCtx.createAnalyser();
                      
+                     src.gain.value = 1;
                      src.connect(analyser);
                      analyser.connect(AudCtx.destination);
                      analyser.fftSize = 128;//快速傅里叶变换, 必须为2的N次方
@@ -1410,6 +1411,7 @@
                         } catch(e){
                             console.log(e);
                         }
+                        player.volume = 1;
                         player.play();
                         this.playing = true;
                     }
