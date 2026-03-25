@@ -1348,6 +1348,11 @@
                      var src = AudCtx.createMediaElementSource(audio);
                      var analyser = AudCtx.createAnalyser();
                      
+                     const gainNode = AudCtx.createGain();
+                     gainNode.gain.value = 1;
+                     src.connect(gainNode);
+                     gainNode.connect(AudCtx.destination);
+
                      src.connect(analyser);
                      analyser.connect(AudCtx.destination);
                      analyser.fftSize = 128;//快速傅里叶变换, 必须为2的N次方
