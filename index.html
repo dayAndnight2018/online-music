@@ -1353,10 +1353,10 @@
                      
                      const bassFilter = AudCtx.createBiquadFilter();
                      bassFilter.type = 'lowshelf';
-                     bassFilter.frequency.value = 150;
-                     bassFilter.gain.value = 15;
+                     bassFilter.frequency.value = 8000;
+                     bassFilter.gain.value = 1.5;
                      
-                     src.connect(bassFilter);
+                     src.connect(gainNode);
                      bassFilter.connect(gainNode);
                      gainNode.connect(AudCtx.destination);
 
