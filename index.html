@@ -1347,10 +1347,17 @@
                      var AudCtx = new AudioContext();//音频内容
                      var src = AudCtx.createMediaElementSource(audio);
                      var analyser = AudCtx.createAnalyser();
-                     
+                      
                      const gainNode = AudCtx.createGain();
-                     gainNode.gain.value = 1;
-                     src.connect(gainNode);
+                     gainNode.gain.value = 1.5;
+                     
+                     const bassFilter = AudCtx.createBiquadFilter();
+                     bassFilter.type = 'lowshelf';
+                     bassFilter.frequency.value = 150;
+                     bassFilter.gain.value = 15;
+                     
+                     src.connect(bassFilter);
+                     bassFilter.connect(gainNode);
                      gainNode.connect(AudCtx.destination);
 
                      src.connect(analyser);
